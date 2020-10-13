@@ -16,7 +16,7 @@
         import Sidebar from './components/sidebar.riot'
         import AppHeader from './components/app-header.riot'
         import AppFooter from './components/app-footer.riot'
-        import AppRoute from './components/app-route.riot'
+        import AppRoute from './components/app-router.riot'
         export default {
             components: {
                 Login,
@@ -26,7 +26,7 @@
                 AppRoute
             },
             state: {
-                isLoggedIn: false
+                isLoggedIn: true
             },
             onBeforeMount(props, state) {
             },
