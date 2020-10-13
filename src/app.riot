@@ -1,3 +1,41 @@
 <app>
-    <p>{ props.title }</p>
+    <login if={ !state.isLoggedIn } />
+    <div id="wrapper" if={ state.isLoggedIn }>
+        <router base={ base }>
+            <sidebar />
+            <app-header />
+            <div id="container">
+                <app-route />
+            </div>
+            <app-footer />
+        </router>
+    </div>
+
+    <script>
+        import Login from './pages/login.riot.html'
+        import Sidebar from './components/sidebar.riot'
+        import AppHeader from './components/app-header.riot'
+        import AppFooter from './components/app-footer.riot'
+        import AppRoute from './components/app-route.riot'
+        export default {
+            components: {
+                Login,
+                Sidebar,
+                AppHeader,
+                AppFooter,
+                AppRoute
+            },
+            state: {
+                isLoggedIn: false
+            },
+            onBeforeMount(props, state) {
+            },
+            onMounted() {
+                this.query.select('isLoggedIn').subscribe(val => {
+                    this.update({ isLoggedIn: val })
+                })
+            },
+            base: `${window.location.protocol}//${window.location.host}`
+        }
+    </script>
 </app>

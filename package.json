@@ -8,6 +8,8 @@
     "@riotjs/hot-reload": "^4.0.1",
     "@riotjs/route": "^6.0.2",
     "@riotjs/webpack-loader": "^4.0.3",
+    "eslint-config-riot": "^3.0.0",
+    "eslint-plugin-riot": "^0.1.8",
     "riot": "4.11.0",
     "semantic-ui-riot": "^2.2.4",
     "webpack": "^4.44.2",
