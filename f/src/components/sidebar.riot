@@ -1,0 +1,95 @@
+<sidebar>
+    <navigation>
+        <div class="ui visible sidebar lists inverted  vertical menu ">
+            <div class="item sidebar-head">
+                <a class="ui logo icon image" href="/">
+                    <i class="user icon"></i>
+                </a>
+                <a href="/">
+                    ユーザー
+                </a>
+            </div>
+            <div class="item">
+                <div class="list">
+                    <div class="item">
+                            <a href="/">ぼうけんのしょ</a>
+                    </div>
+                    <div class="item">
+                            <a href="/">ぼうけんのしょ</a>
+                    </div>
+                    <div class="item">
+                            <a href="/">ぼうけんのしょ</a>
+                    </div>
+                    <div class="item">
+                            <a href="/">ぼうけんのしょ</a>
+                    </div>
+                    <div class="item">
+                            <a href="/">ぼうけんのしょ</a>
+                    </div>
+                    <div class="item">
+                            <a href="/">ぼうけんのしょ</a>
+                    </div>
+                </div>
+            </div>
+            <div class="item logout">
+                <a>
+                    ろぐあうと
+                </a>
+                <a href="/">
+                    <i class="sign-out icon"></i>
+                </a>
+            </div>
+        </div>
+    </navigation>
+
+    <script>
+        export default {
+            handleLogout() {
+                this.service.logout()
+            }
+        }
+    </script>
+
+    <style>
+        a.icon {
+            color: #fff;
+        }
+        i.user.icon {
+            font-size: 3rem;
+        }
+        .ui.sidebar.menu {
+            background: #000;
+            border: 2px solid;
+            border-color: #fff;
+            border-radius: 8px;
+            font-family:'MochiFont' !important;
+            width: 15%;
+            transition: width .2s;
+        }
+        .sidebar.menu:hover {
+            width:16%;
+        }
+        .list > .item {
+            margin: 1.5rem auto;
+            font-size: 1rem;
+        }
+        .list > .item > a {
+            text-decoration: none;
+        }
+        .list > .item > a:hover {
+            color: #00b5ad !important;
+        }
+        .item.sidebar-head > a {
+            text-decoration: none;
+        }
+        .item.sidebar-head > a:hover {
+            color: #00b5ad !important;
+        }
+        .logout > a {
+            text-decoration: none;
+        }
+        .logout > a:hover {
+            color: #00b5ad !important;
+        }
+    </style>
+</sidebar>

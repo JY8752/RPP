@@ -1,0 +1,24 @@
+{
+  "name": "front",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@riotjs/compiler": "^4.11.0",
+    "@riotjs/hot-reload": "^4.0.1",
+    "@riotjs/route": "^6.0.2",
+    "@riotjs/webpack-loader": "^4.0.3",
+    "eslint-config-riot": "^3.0.0",
+    "eslint-plugin-riot": "^0.1.8",
+    "gulp": "^4.0.2",
+    "riot": "4.11.0",
+    "semantic-ui-riot": "^2.2.4",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.10.0",
+    "gulp-cli": "^2.3.0"
+  }
+}
