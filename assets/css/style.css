@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'MochiFont';
+    src: url('../font/NuKinakoMochi-Reg.otf');
+}
+
+html, body {
+    font-family:'MochiFont' !important;
+    height: 100%;
+    margin: 0;
+}
