@@ -1,0 +1,71 @@
+<login>
+    <!--  TODOバリデーション処理-->
+    <div class="ui card">
+        <h2>login</h2>
+        <div class="ui form">
+            <form onsubmit={ handleSubmit }>
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input
+                            type="text"
+                            name="username"
+                            placeholder="Username"
+                        />
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                        />
+                    </div>
+                </div>
+                <div class="inline field">
+                    <button
+                        class="ui teal button"
+                        type="submit"
+                    >Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        :host {
+            max-width: 80%;
+            height: 100vh;
+            margin: 0 auto;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        h2 {
+            font-size: 2rem;
+        }
+        .ui.card {
+            padding: 3rem;
+            width: 50%;
+        }
+        @media (max-width: 375px) {
+            .ui.card {
+                width:100%;
+            }
+        }
+    </style>
+    <script>
+        export default {
+            handleSubmit(e) {
+                e.preventDefault()
+                if(e.target.username.value.length !== 0
+                    && e.target.username.value.length !== 0) {
+                        //TODO ログイン処理
+                    }
+            }
+        }
+    </script>
+</login>
