@@ -23,5 +23,14 @@ module.exports = {
                 }]
             }
         ]
+    },
+     //webpack-dev-server用設定
+    devServer: {
+        host: "0.0.0.0",
+        open: true,//ブラウザを自動で開く
+        openPage: "index.html",//自動で指定したページを開く
+        //contentBase: path.join(__dirname, 'public'),// HTML等コンテンツのルートディレクトリ
+        watchContentBase: true,//コンテンツの変更監視をする
+        port: 8080 // ポート番号
     }
 }
