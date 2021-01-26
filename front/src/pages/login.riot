@@ -1,64 +1,71 @@
 <login>
     <!--  TODOバリデーション処理-->
-    <div class="ui card">
-        <h2>login</h2>
-        <div class="ui form">
-            <form onsubmit={ handleSubmit }>
-                <div class="field">
-                    <div class="ui left icon input">
-                        <i class="user icon"></i>
-                        <input
-                            type="text"
-                            name="username"
-                            placeholder="Username"
-                        />
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="ui left icon input">
-                        <i class="lock icon"></i>
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                        />
-                    </div>
-                </div>
-                <div class="inline field">
-                    <button
-                        class="ui teal button"
-                        type="submit"
-                    >Login</button>
-                </div>
-            </form>
+    <div class="app-logo">
+        <h1>RPP</h1>
+        <p>~ロールプレイング風のポートフォリオ~</p>
+        <div class="nes-container is-rounded is-dark">
+            <ul>
+                <li><a>はじめから</a></li>
+                <li><a>つづきから</a></li>
+            </ul>
         </div>
     </div>
 
     <style>
         :host {
-            max-width: 80%;
+            font-family:'MochiFont' !important;
             height: 100vh;
             margin: 0 auto;
             text-align: center;
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: #000;
         }
-        h2 {
+        .nes-container {
+            margin-top: 3rem;
+        }
+        .nes-container ul {
+            padding: 0;
+        }
+        .nes-container li {
+            list-style-type: none;
+            padding: 1.5rem;
+        }
+        .app-logo h1{
+            font-family:'MochiFont' !important;
+            font-size: 5rem;
+        }
+        .app-logo p {
             font-size: 2rem;
         }
-        .ui.card {
+        .app-logo {
+            color: #fff;
+            position: relative;
             padding: 3rem;
-            width: 50%;
+            bottom: -80%;
         }
         @media (max-width: 375px) {
-            .ui.card {
+            .app-logo {
                 width:100%;
             }
         }
     </style>
     <script>
+        import anime from 'animejs'
+
         export default {
+            onMounted() {
+                anime({
+                    targets: '.app-logo',
+                    translateY: -600,
+                    duration: 10000,
+                    easing: 'easeInOutQuad',
+                    complete: () => {
+
+                    }
+                })
+            },
             handleSubmit(e) {
                 e.preventDefault()
                 if(e.target.username.value.length !== 0
