@@ -5,8 +5,8 @@
         <p>~ロールプレイング風のポートフォリオ~</p>
         <div class="nes-container is-rounded is-dark">
             <ul>
-                <li><a>はじめから</a></li>
-                <li><a>つづきから</a></li>
+                <li><a href="#" onclick={ newGame }>はじめから</a></li>
+                <li><a href="#" onclick={ continueGame }>つづきから</a></li>
             </ul>
         </div>
     </div>
@@ -31,6 +31,12 @@
         .nes-container li {
             list-style-type: none;
             padding: 1.5rem;
+        }
+        .nes-container li > a:hover {
+            opacity: .5
+        }
+        .nes-container li > a {
+            color: #fff;
         }
         .app-logo h1{
             font-family:'MochiFont' !important;
@@ -66,12 +72,11 @@
                     }
                 })
             },
-            handleSubmit(e) {
-                e.preventDefault()
-                if(e.target.username.value.length !== 0
-                    && e.target.username.value.length !== 0) {
-                        //TODO ログイン処理
-                    }
+            newGame(e) {
+                
+            },
+            continueGame(e) {
+
             }
         }
     </script>
