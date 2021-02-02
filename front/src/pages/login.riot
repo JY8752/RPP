@@ -1,16 +1,35 @@
 <login>
-    <!--  TODOバリデーション処理-->
-    <div class="app-logo">
-        <h1>RPP</h1>
-        <p>~ロールプレイング風のポートフォリオ~</p>
-        <div class="nes-container is-rounded is-dark">
-            <ul>
-                <li><a href="#" onclick={ newGame }>はじめから</a></li>
-                <li><a href="#" onclick={ continueGame }>つづきから</a></li>
-            </ul>
+    <template if={ state.isStart }>
+        <div class="app-logo">
+            <h1>RPP</h1>
+            <p>~ロールプレイング風のポートフォリオ~</p>
+            <div class="nes-container is-rounded is-dark">
+                <ul>
+                    <li><a href="javascript:void(0)" onclick={ newGame }>はじめから</a></li>
+                    <li><a href="javascript:void(0)" onclick={ continueGame }>つづきから</a></li>
+                </ul>
+            </div>
+        </div> 
+    </template>
+    <template if={ state.isNewGame }>
+        <div class="user-data" each={ user in userData }>
+            <div class="nes-container is-rounded is-dark" if={ user.id !== null }>
+                <div>
+                    <dl>
+                        <dd>{ user.id }</dd>
+                        <dt>{ user.name }</dt>
+                        <dt>{ user.role }</dt>
+                    </dl>
+                </div>
+            </div>
+            <div class="nes-container is-rounded is-dark" if={ user.id === null }>
+                <div>
+                    ぼうけんの書を作成する
+                </div>
+            </div>
         </div>
-    </div>
-
+    </template>
+    <continue-game if={ state.isContinue }/>
     <style>
         :host {
             font-family:'MochiFont' !important;
@@ -21,6 +40,9 @@
             justify-content: center;
             align-items: center;
             background-color: #000;
+        }
+        .user-data {
+            display: block;
         }
         .nes-container {
             margin-top: 3rem;
@@ -59,24 +81,42 @@
     </style>
     <script>
         import anime from 'animejs'
-
+        import ContinueGame from '../components/login/continue-game.riot'
         export default {
+            components: {
+                ContinueGame
+            },
+            userData: [
+                {id: 1, name: 'testName1', role: 'java-programer', revel: 1},
+                {id: 2, name: 'testName2', role: 'ruby-programer', revel: 2},
+                {id: null, name: null, role: null, revel: null}
+            ],
+            state: {
+                isStart: true,
+                isNewGame: false,
+                isContinue: false
+            },
+            onBeforeMount(props, state) {
+            },
             onMounted() {
                 anime({
                     targets: '.app-logo',
                     translateY: -600,
                     duration: 10000,
-                    easing: 'easeInOutQuad',
-                    complete: () => {
-
-                    }
+                    easing: 'easeInOutQuad'
                 })
             },
             newGame(e) {
-                
+                this.update({
+                    isStart: false,
+                    isNewGame: true
+                })
             },
             continueGame(e) {
-
+                this.update({
+                    isStart: false,
+                    isContinue: true
+                })
             }
         }
     </script>

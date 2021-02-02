@@ -1,0 +1,38 @@
+<continue-game>
+    <div class="user-data" each={ user in userData }>
+        <div class="nes-container is-rounded is-dark" if={ user.id !== null }>
+            <div>
+                <dl>
+                    <dd>{ user.id }</dd>
+                    <dt>{ user.name }</dt>
+                    <dt>{ user.role }</dt>
+                </dl>
+            </div>
+        </div>
+        <div class="nes-container is-rounded is-dark" if={ user.id === null }>
+            <div>
+                ぼうけんの書を作成する
+            </div>
+        </div>
+    </div>
+
+    <style>
+
+    </style>
+
+    <script>
+        export default {
+            userData: [
+                {id: 1, name: 'testName1', role: 'java-programer', revel: 1},
+                {id: 2, name: 'testName2', role: 'ruby-programer', revel: 2},
+                {id: null, name: null, role: null, revel: null}
+            ],
+            state: {
+
+            },
+            onBeforeMount() {
+
+            }
+        }
+    </script>
+</continue-game>
