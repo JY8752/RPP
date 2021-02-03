@@ -1,23 +1,23 @@
 <continue-game>
     <div class="user-data" each={ user in userData }>
         <div class="nes-container is-rounded is-dark" if={ user.id !== null }>
-            <div>
-                <dl>
-                    <dd>{ user.id }</dd>
-                    <dt>{ user.name }</dt>
-                    <dt>{ user.role }</dt>
-                </dl>
-            </div>
+            <dd>{ user.id }</dd>
+            <dt>{ user.name }</dt>
+            <dt>{ user.role }</dt>
         </div>
         <div class="nes-container is-rounded is-dark" if={ user.id === null }>
-            <div>
-                ぼうけんの書を作成する
-            </div>
+            ぼうけんの書を作成する
         </div>
     </div>
 
     <style>
-
+        :host {
+            width: 100vh;
+        }
+        .nes-container.is-rounded.is-dark {
+            width: 60%;
+            margin: 0 auto;
+        }
     </style>
 
     <script>
