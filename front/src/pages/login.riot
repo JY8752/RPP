@@ -11,24 +11,7 @@
             </div>
         </div> 
     </template>
-    <template if={ state.isNewGame }>
-        <div class="user-data" each={ user in userData }>
-            <div class="nes-container is-rounded is-dark" if={ user.id !== null }>
-                <div>
-                    <dl>
-                        <dd>{ user.id }</dd>
-                        <dt>{ user.name }</dt>
-                        <dt>{ user.role }</dt>
-                    </dl>
-                </div>
-            </div>
-            <div class="nes-container is-rounded is-dark" if={ user.id === null }>
-                <div>
-                    ぼうけんの書を作成する
-                </div>
-            </div>
-        </div>
-    </template>
+    <new-game if={ state.isNewGame }/>
     <continue-game if={ state.isContinue }/>
     <style>
         :host {
@@ -40,9 +23,6 @@
             justify-content: center;
             align-items: center;
             background-color: #000;
-        }
-        .user-data {
-            display: block;
         }
         .nes-container {
             margin-top: 3rem;
@@ -82,15 +62,12 @@
     <script>
         import anime from 'animejs'
         import ContinueGame from '../components/login/continue-game.riot'
+        import NewGame from '../components/login/new-game.riot'
         export default {
             components: {
-                ContinueGame
+                ContinueGame,
+                NewGame
             },
-            userData: [
-                {id: 1, name: 'testName1', role: 'java-programer', revel: 1},
-                {id: 2, name: 'testName2', role: 'ruby-programer', revel: 2},
-                {id: null, name: null, role: null, revel: null}
-            ],
             state: {
                 isStart: true,
                 isNewGame: false,

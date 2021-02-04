@@ -1,2 +1,38 @@
 <new-game>
+    <div class="nes-container is-rounded is-dark">
+        <span id="typed"></span>
+    </div>
+
+    <style>
+        :host {
+            width: 100vh;
+        }
+        .nes-container.is-rounded.is-dark {
+            height: 150px;
+            width: 60%;
+            margin: 0 auto;
+        }
+    </style>
+
+    <script>
+        import Typed from 'typed.js'
+
+        //type.jsを使用する場合はこの変数にTypedインスタンスをnewして格納する
+        let typed
+        let strings = []
+
+        export default {
+            state: {
+
+            }
+            onMounted() {
+                strings.push('Hello World!!!')
+                typed = new Typed('#typed', {
+                    strings,
+                    typeSpeed: 100
+                })
+            }
+
+        }
+    </script>
 </new-game>
