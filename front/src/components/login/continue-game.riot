@@ -1,12 +1,12 @@
 <continue-game>
     <div class="user-data" each={ user in userData }>
         <div class="nes-container is-rounded is-dark" if={ user.id !== null }>
-            <dd>{ user.id }</dd>
+            <dt>{ user.id }</dt>
             <dt>{ user.name }</dt>
             <dt>{ user.role }</dt>
         </div>
         <div class="nes-container is-rounded is-dark" if={ user.id === null }>
-            ぼうけんの書を作成する
+            <p>ぼうけんの書を作成する</p>
         </div>
     </div>
 
@@ -15,8 +15,15 @@
             width: 100vh;
         }
         .nes-container.is-rounded.is-dark {
+            height: 150px;
             width: 60%;
             margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nes-container.is-rounded.is-dark dt {
+            margin-right: .5rem
         }
     </style>
 
