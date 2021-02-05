@@ -2,6 +2,10 @@
     <div class="nes-container is-rounded is-dark">
         <span id="typed"></span>
     </div>
+    <div class="nes-field is-inline">
+        <input type="text" class="nes-input is-dark" placeholder="あなたの名前"/>
+        <button class="nes-btn">けってい</button>
+    </div>
 
     <style>
         :host {
@@ -11,28 +15,32 @@
             height: 150px;
             width: 60%;
             margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 
     <script>
         import Typed from 'typed.js'
 
-        //type.jsを使用する場合はこの変数にTypedインスタンスをnewして格納する
-        let typed
-        let strings = []
-
         export default {
-            state: {
-
-            }
+            onBeforeMount() {
+                //stateの初期化
+                this.state.strings = [
+                    'ぼうけんの書をあらたに作成します。',
+                    'あなたのなまえを入力してください。'
+                ]
+            },
             onMounted() {
-                strings.push('Hello World!!!')
-                typed = new Typed('#typed', {
-                    strings,
-                    typeSpeed: 100
+                const typed = this.typedWord(this.state.strings)
+            },
+            typedWord(words) {
+                return new Typed('#typed', {
+                    strings: words,
+                    typeSpeed: 80
                 })
             }
-
         }
     </script>
 </new-game>
