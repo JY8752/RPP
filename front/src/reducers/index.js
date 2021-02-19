@@ -1,6 +1,10 @@
 import { combineReducers } from 'redux'
-import userData from './userData'
+import userDataList from './userDataListReducer'
+import userData from './userDataReducer'
+import strings from './stringsReducer'
 
 export default combineReducers({
-    userData
+    userDataList,
+    userData,
+    strings
 })

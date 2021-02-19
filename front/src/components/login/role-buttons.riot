@@ -1,0 +1,13 @@
+<role-buttons>
+    <div class="nes-container is-rounded is-dark">
+        <button each={ (item, index) in props.buttons } 
+            class="nes-btn is-primary" 
+            onclick={ handleClick }>{ item }</button>
+    </div>
+
+    <script>
+        export default {
+            handleClick() {}
+        }
+    </script>
+</role-buttons>

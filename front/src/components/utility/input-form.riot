@@ -1,0 +1,28 @@
+<input-form>
+    <div class="nes-field is-inline">
+        <form onsubmit={ inputName }>
+            <input 
+                type="text"
+                name={ props.formName }
+                class="nes-input is-dark"
+                placeholder={ props.placeholder }
+            />
+            <button type=submit class="nes-btn">けってい</button>
+        </form>
+    </div>
+
+    <style>
+        .nes-field.is-inline {
+            width: 60%;
+            margin: .5rem auto auto;
+        }
+    </style>
+
+    <script>
+        export default {
+            inputName(e) {
+                this.props.nextStage(e)
+            }
+        }
+    </script>
+</input-form>

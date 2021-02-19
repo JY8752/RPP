@@ -1,45 +1,62 @@
 <new-game>
-    <div class="nes-container is-rounded is-dark">
-        <span id="typed"></span>
-    </div>
-    <div class="nes-field is-inline">
-        <input type="text" class="nes-input is-dark" placeholder="あなたの名前"/>
-        <button class="nes-btn">けってい</button>
-    </div>
-
+    <typed/>
+    <input-form 
+        formName={ 'name' } 
+        placeholder={ 'あなたのなまえ' } 
+        nextStage={ inputName }
+        if={ this.store.getState().userData.isInputForm }
+    />
+    <role-buttons 
+        buttons={ languages }
+        if={ this.store.getState().userData.isRoleButtons }
+    /> 
     <style>
         :host {
             width: 100vh;
         }
-        .nes-container.is-rounded.is-dark {
-            height: 150px;
-            width: 60%;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
     </style>
 
     <script>
-        import Typed from 'typed.js'
+        import Typed from '../typed.riot'
+        import InputForm from '../utility/input-form.riot'
+        import RoleButtons from './role-buttons.riot'
+        import userDataAction from '../../actions/userDataAction.js'
+        import stringsAction from '../../actions/stringsAction.js'
 
         export default {
+            components: {
+                Typed,
+                InputForm,
+                RoleButtons
+            },
+            languages: [
+                'Java',
+                'Ruby',
+                'Rust'
+            ],
             onBeforeMount() {
-                //stateの初期化
-                this.state.strings = [
+                //typedの初期値
+                const words = [
                     'ぼうけんの書をあらたに作成します。',
                     'あなたのなまえを入力してください。'
                 ]
+                this.store.dispatch(userDataAction.reset()) //ユーザー情報の初期化
+                this.store.dispatch(stringsAction.changeStrings(words)) //typed.jsで出力する文字列の初期化
             },
-            onMounted() {
-                const typed = this.typedWord(this.state.strings)
-            },
-            typedWord(words) {
-                return new Typed('#typed', {
-                    strings: words,
-                    typeSpeed: 80
-                })
+            inputName(e) {
+                e.preventDefault()
+
+                //ユーザー名をstateに追加する
+                const userName = e.target.name.value
+                this.store.dispatch(userDataAction.addUserName(userName))
+
+                //typed.jsで出力する文字列を更新する
+                const nextWords = ['あなたの職業はプログラマーです。', 'あなたが興味のある言語をえらんでください。']
+                this.store.dispatch(stringsAction.changeStrings(nextWords))
+
+                //画面の更新
+                e.target.name.value = ''
+                this.update()
             }
         }
     </script>
