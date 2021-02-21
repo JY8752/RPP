@@ -1,6 +1,6 @@
 <input-form>
     <div class="nes-field is-inline">
-        <form onsubmit={ inputName }>
+        <form onsubmit={ handleSubmit }>
             <input 
                 type="text"
                 name={ props.formName }
@@ -20,7 +20,7 @@
 
     <script>
         export default {
-            inputName(e) {
+            handleSubmit(e) {
                 this.props.nextStage(e)
             }
         }

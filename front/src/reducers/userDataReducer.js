@@ -7,7 +7,9 @@ const initialState = {
     role: '',
     password: '',
     isInputForm: true,
-    isRoleButtons: false
+    isRoleButtons: false,
+    isConfirmRadio: false,
+    isUserData: false
 }
 
 
@@ -20,6 +22,22 @@ const userData = (state = { users: initialState }, action) => {
                 name: action.name,
                 isInputForm: false,
                 isRoleButtons: true
+            })
+        case 'CHANGE_CONFIRM_RADIO':
+            return Object.assign({}, state, { isConfirmRadio: !state.isConfirmRadio })
+        case 'ADD_USER_ROLE':
+            return Object.assign({}, state, {
+                role: action.role,
+                isPasswordForm: true,
+                isRoleButtons: false,
+                isConfirmRadio: false
+            })
+        case 'ADD_USER_PASSWORD':
+            return Object.assign({}, state, { 
+                password: action.password,
+                isPasswordForm: false,
+                isConfirmRadio: true,
+                isUserData: true
             })
         default:
             return state

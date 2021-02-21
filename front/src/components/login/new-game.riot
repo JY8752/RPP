@@ -6,10 +6,27 @@
         nextStage={ inputName }
         if={ this.store.getState().userData.isInputForm }
     />
+    <input-form 
+        formName={ 'password' } 
+        placeholder={ 'あいことは゛' } 
+        nextStage={ inputPassword }
+        if={ this.store.getState().userData.isPasswordForm }
+    />
     <role-buttons 
         buttons={ languages }
+        confirm={ confirmLanguage }
         if={ this.store.getState().userData.isRoleButtons }
     /> 
+    <confirm-radio
+        observable={ obs }
+        value={ language }
+        
+        if={ this.store.getState().userData.isConfirmRadio }
+    />
+    <user-data
+        inputData={ this.store.getState().userData }
+        if={ this.store.getState().userData.isUserData }
+    />
     <style>
         :host {
             width: 100vh;
@@ -20,28 +37,58 @@
         import Typed from '../typed.riot'
         import InputForm from '../utility/input-form.riot'
         import RoleButtons from './role-buttons.riot'
+        import ConfirmRadio from '../utility/confirm-radio.riot'
+        import UserData from './user-data.riot'
+
         import userDataAction from '../../actions/userDataAction.js'
         import stringsAction from '../../actions/stringsAction.js'
+
+        import observable from '@riotjs/observable'
 
         export default {
             components: {
                 Typed,
                 InputForm,
-                RoleButtons
+                RoleButtons,
+                ConfirmRadio,
+                UserData
             },
             languages: [
-                'Java',
-                'Ruby',
-                'Rust'
+                {
+                    language: 'Java',
+                    color: 'is-success'
+                },
+                {
+                    language: 'Ruby',
+                    color: 'is-error'
+                },
+                {
+                    language: 'Rust',
+                    color: 'is-primary'
+                }
             ],
             onBeforeMount() {
-                //typedの初期値
-                const words = [
-                    'ぼうけんの書をあらたに作成します。',
-                    'あなたのなまえを入力してください。'
-                ]
                 this.store.dispatch(userDataAction.reset()) //ユーザー情報の初期化
-                this.store.dispatch(stringsAction.changeStrings(words)) //typed.jsで出力する文字列の初期化
+                this.store.dispatch(stringsAction.enterNameStrings()) //typed.jsで出力する文字列の初期化
+
+                //イベントを監視するためのobservableインスタンスを作成して子コンポーネントに渡す
+                this.obs = observable(this)
+                //言語選択の確認ラジオボタンがクリックされたときの処理
+                this.obs.on('click confirm radio', (language, val) => {
+                    if(val === 'Yes') {
+                        //選択された言語でstateを更新する
+                        this.store.dispatch(userDataAction.addUserRole(language))
+                        //typed.jsで出力する文字列を更新する
+                        this.store.dispatch(stringsAction.enterPasswordStrings())
+                    } else {
+                        //typed.jsで出力する文字列を戻す
+                        this.store.dispatch(stringsAction.selectLanguageStrings())
+                        //ラジオボタンを非表示
+                        this.store.dispatch(userDataAction.changeConfirmRadio())
+                    }
+                    //画面更新
+                    this.update()
+                })
             },
             inputName(e) {
                 e.preventDefault()
@@ -51,11 +98,45 @@
                 this.store.dispatch(userDataAction.addUserName(userName))
 
                 //typed.jsで出力する文字列を更新する
-                const nextWords = ['あなたの職業はプログラマーです。', 'あなたが興味のある言語をえらんでください。']
-                this.store.dispatch(stringsAction.changeStrings(nextWords))
+                this.store.dispatch(stringsAction.selectLanguageStrings())
 
                 //画面の更新
                 e.target.name.value = ''
+                this.update()
+            },
+            confirmLanguage(e) {
+                //選択された言語
+                const language = e.target.value
+
+                //typed.jsで出力する言語説明
+                const nextWords = (language) => {
+                    switch(language) {
+                        case 'Java':
+                            return ['オブジェクト指向といえばのバランス型の言語。得意なIDEはeclipse。得意技はnullチェック。いつかVSCodeで開発したい。']
+                        default:
+                            return []
+                    }
+                }
+                //typed.jsで出力する言語を更新
+                this.store.dispatch(stringsAction.changeStrings(nextWords(language)))
+                //確認ラジオボタンを表示するフラグ更新
+                this.store.dispatch(userDataAction.changeConfirmRadio())
+                //選択された言語を子コンポーネントに渡す
+                this.language = language
+                //画面更新
+                this.update()
+            },
+            inputPassword(e) {
+                e.preventDefault()
+
+                //入力されたあいことばでstateを更新
+                const password = e.target.password.value
+                this.store.dispatch(userDataAction.addUserPassword(password))
+
+                //今までに入力された内容の確認をするための文字列を更新
+                this.store.dispatch(stringsAction.confirmUserDataStrings())
+
+                //画面更新
                 this.update()
             }
         }

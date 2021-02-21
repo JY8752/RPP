@@ -6,6 +6,7 @@
   "dependencies": {
     "@riotjs/compiler": "^4.11.0",
     "@riotjs/hot-reload": "^4.0.1",
+    "@riotjs/observable": "^4.0.4",
     "@riotjs/route": "^6.0.2",
     "@riotjs/webpack-loader": "^4.0.3",
     "animejs": "^3.2.1",

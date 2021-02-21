@@ -5,7 +5,8 @@ module.exports = {
     addUserId,
     addUserName,
     addUserRole,
-    addUserPassword
+    addUserPassword,
+    changeConfirmRadio
 }
 
 //stateの初期値
@@ -15,7 +16,10 @@ const initialState = {
     role: '',
     password: '',
     isInputForm: true,
-    isRoleButtons: false
+    isRoleButtons: false,
+    isConfirmRadio: false,
+    isPasswordForm: false,
+    isUserData: false
 }
 
 function reset() {
@@ -36,4 +40,8 @@ function addUserRole(role) {
 
 function addUserPassword(password) {
     return { type: 'ADD_USER_PASSWORD', password: password }
+}
+
+function changeConfirmRadio() {
+    return { type: 'CHANGE_CONFIRM_RADIO'}
 }

@@ -1,13 +1,16 @@
 <role-buttons>
     <div class="nes-container is-rounded is-dark">
-        <button each={ (item, index) in props.buttons } 
-            class="nes-btn is-primary" 
-            onclick={ handleClick }>{ item }</button>
+        <button each={ item in props.buttons } 
+            class="nes-btn { item.color }"
+            value={ item.language }
+            onclick={ handleClick }>{ item.language }</button>
     </div>
 
     <script>
         export default {
-            handleClick() {}
+            handleClick(e) {
+                this.props.confirm(e)
+            }
         }
     </script>
 </role-buttons>
