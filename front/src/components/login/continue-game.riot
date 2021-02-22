@@ -1,0 +1,37 @@
+<continue-game>
+    <div class="user-data" each={ user in userData }>
+        <div class="nes-container is-rounded is-dark" if={ user.id !== null }>
+            <dt>{ user.id }</dt>
+            <dt>{ user.name }</dt>
+            <dt>{ user.role }</dt>
+        </div>
+        <div class="nes-container is-rounded is-dark" if={ user.id === null }>
+            <p>ぼうけんの書を作成する</p>
+        </div>
+    </div>
+
+    <style>
+        :host {
+            width: 100vh;
+        }
+        .nes-container.is-rounded.is-dark {
+            height: 150px;
+            width: 60%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nes-container.is-rounded.is-dark dt {
+            margin-right: .5rem
+        }
+    </style>
+
+    <script>
+        export default {
+            onBeforeMount() {
+                this.userData = this.store.getState().userData.users
+            }
+        }
+    </script>
+</continue-game>

@@ -1,0 +1,34 @@
+<user-data>
+    <h1>入力データ</h1>
+    <div class="nes-table-responsive">
+        <table class="nes-table is-bordered is-dark">
+            <tbody>
+            <tr>
+                <th>id</th>
+                <td>{ props.inputData.id }</td>
+            </tr>
+            <tr>
+                <th>なまえ</th>
+                <td>{ props.inputData.name }</td>
+            </tr>
+            <tr>
+                <th>プログラミング言語</th>
+                <td>{ props.inputData.role }</td>
+            </tr>
+            <tr>
+                <th>あいことば</th>
+                <td>{ props.inputData.password }</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <style>
+        h1 {
+            font-family:'MochiFont' !important;
+            color: #fff;
+        }
+        .nes-table-responsive > table {
+            width: 100%;
+        }
+    </style>
+</user-data>

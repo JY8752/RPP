@@ -1,0 +1,41 @@
+<!-- typed.jsにて文字列を表示するためのユーティリティー -->
+<typed>
+    <div class="nes-container is-rounded is-dark">
+        <span id="typed"></span>
+    </div>
+
+    <style>
+        .nes-container.is-rounded.is-dark {
+            height: 150px;
+            width: 60%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+
+    <script>
+        import Typed from 'typed.js'
+        let typed
+        export default {
+            onMounted() {
+                this.typedWord(this.store.getState().strings.words)
+            },
+            onBeforeUpdate() {
+                this.typedWord(this.store.getState().strings.words)
+            },
+            typedWord(words) {
+                //typedインスタンスを初期化
+                if(typeof this.typed !== 'undefined') {
+                    this.typed.destroy()
+                }
+
+                this.typed = new Typed('#typed', {
+                    strings: words,
+                    typeSpeed: 80
+                })
+            }
+        }
+    </script>
+</typed>
