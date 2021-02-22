@@ -19,13 +19,19 @@
     /> 
     <confirm-radio
         observable={ obs }
+        event={ 'confirm language' }
         value={ language }
-        
-        if={ this.store.getState().userData.isConfirmRadio }
+        if={ this.store.getState().userData.isConfirmLanguage }
     />
     <user-data
         inputData={ this.store.getState().userData }
         if={ this.store.getState().userData.isUserData }
+    />
+    <confirm-radio
+        observable={ obs }
+        event={ 'confirm userData' }
+        value={ 'aaaaaa' }
+        if={ this.store.getState().userData.isConfirmUserData }
     />
     <style>
         :host {
@@ -73,8 +79,9 @@
 
                 //イベントを監視するためのobservableインスタンスを作成して子コンポーネントに渡す
                 this.obs = observable(this)
+
                 //言語選択の確認ラジオボタンがクリックされたときの処理
-                this.obs.on('click confirm radio', (language, val) => {
+                this.obs.on('confirm language', (language, val) => {
                     if(val === 'Yes') {
                         //選択された言語でstateを更新する
                         this.store.dispatch(userDataAction.addUserRole(language))
@@ -84,10 +91,24 @@
                         //typed.jsで出力する文字列を戻す
                         this.store.dispatch(stringsAction.selectLanguageStrings())
                         //ラジオボタンを非表示
-                        this.store.dispatch(userDataAction.changeConfirmRadio())
+                        this.store.dispatch(userDataAction.disableConfirmLanguageRadio())
                     }
                     //画面更新
                     this.update()
+                })
+
+                //ユーザー情報の確認ラジオボタンがクリックされたときの処理
+                this.obs.on('confirm userData', (language, val) => {
+                    if(val === 'Yes') {
+                        console.log('APIリクエストします')
+                    } else {
+                        //入力データを初期化
+                        this.store.dispatch(userDataAction.reset())
+                        //typed.jsで出力する文字列も初期化
+                        this.store.dispatch(stringsAction.enterNameStrings())
+                        //画面更新
+                        this.update()
+                    }
                 })
             },
             inputName(e) {
@@ -120,7 +141,7 @@
                 //typed.jsで出力する言語を更新
                 this.store.dispatch(stringsAction.changeStrings(nextWords(language)))
                 //確認ラジオボタンを表示するフラグ更新
-                this.store.dispatch(userDataAction.changeConfirmRadio())
+                this.store.dispatch(userDataAction.enableConfirmLanguageRadio())
                 //選択された言語を子コンポーネントに渡す
                 this.language = language
                 //画面更新

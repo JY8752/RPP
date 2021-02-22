@@ -6,7 +6,8 @@ module.exports = {
     addUserName,
     addUserRole,
     addUserPassword,
-    changeConfirmRadio
+    disableConfirmLanguageRadio,
+    enableConfirmLanguageRadio
 }
 
 //stateの初期値
@@ -17,9 +18,10 @@ const initialState = {
     password: '',
     isInputForm: true,
     isRoleButtons: false,
-    isConfirmRadio: false,
+    isConfirmLanguage: false,
     isPasswordForm: false,
-    isUserData: false
+    isUserData: false,
+    isConfirmUserData: false
 }
 
 function reset() {
@@ -42,6 +44,10 @@ function addUserPassword(password) {
     return { type: 'ADD_USER_PASSWORD', password: password }
 }
 
-function changeConfirmRadio() {
-    return { type: 'CHANGE_CONFIRM_RADIO'}
+function enableConfirmLanguageRadio() {
+    return { type: 'ENABLE_CONFIRM_LANGUAGE_RADIO'}
+}
+
+function disableConfirmLanguageRadio() {
+    return { type: 'DISABLE_CONFIRM_LANGUAGE_RADIO'}
 }

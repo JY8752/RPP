@@ -1,21 +1,26 @@
 <confirm-radio>
     <div class="nes-container is-rounded is-dark">
         <label>
-            <input type="radio" class="nes-radio is-dark" value="Yes" onclick={ handleClick } checked/>
+            <input type="radio" class="nes-radio is-dark" name="confirm" value="Yes" onclick={ handleClick } checked/>
             <span>Yes</span>
         </label>
 
         <label>
-            <input type="radio" class="nes-radio is-dark" value="No" onclick={ handleClick } />
+            <input type="radio" class="nes-radio is-dark" name="confirm" value="No" onclick={ handleClick } />
             <span>No</span>
         </label>
     </div>
 
     <script>
         export default {
+            onBeforeMount(props) {
+                console.log(props)
+            },
             handleClick(e) {
-                //親コンポーネントから渡された値、Yes　or Noを返す
-                this.props.observable.trigger('click confirm radio', this.props.value, e.target.value)
+                console.log(this.props)
+                //親コンポーネントから渡されたイベント、Yes　or Noを返す
+                this.props.observable.trigger(this.props.event, this.props.value, e.target.value)
+                this.props.observable.trigger('confirm userData', this.props.value, 'Yes')
             }
         }
     </script>
