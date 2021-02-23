@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
         session[:user_id] = user.id
         render json: { message: "sign in success" }
     else 
-        render json: { message: "sign in fail"}
+        render json: { message: "sign in fail"}, status: 401
     end
   end
 
