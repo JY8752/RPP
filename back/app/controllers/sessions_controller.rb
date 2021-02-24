@@ -3,7 +3,11 @@ class SessionsController < ApplicationController
 
   # 認証
   def sign_in
-    user = User.find(session_params[:user_id]).authenticate(params[:password])
+    begin
+        user = User.find(session_params[:user_id]).authenticate(session_params[:password])
+    rescue ActiveRecord::RecordNotFound => e
+        return render json: { message: "wrong user_id", user_id: session_params[:user_id]}, status: 401
+    end
     if user
         session[:user_id] = user.id
         render json: { message: "sign in success" }
