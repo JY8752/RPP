@@ -6,8 +6,11 @@ class SessionsController < ApplicationController
     begin
         user = User.find(session_params[:user_id]).authenticate(session_params[:password])
     rescue ActiveRecord::RecordNotFound => e
-        return render json: { message: "wrong user_id", user_id: session_params[:user_id]}, status: 401
+        api_error = Exceptions::ApiCommonError.new(e)
+        api_error.set_property('E0001', e.message, "user_id: " + session_params[:user_id], 401)
+        raise(api_error)
     end
+
     if user
         session[:user_id] = user.id
         render json: { message: "sign in success" }

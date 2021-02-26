@@ -1,19 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe "Sessions", type: :request do
-    describe 'POST /api/v1/signin 認証' do
-        #ユーザー作成
-        let(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password') }
-        # bodyパラメーター
-        let(:post_params) {
-            {
-                session: {
-                    user_id: user_a.id,
-                    password: user_a.password 
-                }
+    #ユーザー作成
+    let(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password') }
+    # bodyパラメーター
+    let(:post_params) {
+        {
+            session: {
+                user_id: user_a.id,
+                password: user_a.password 
             }
         }
+    }
 
+    describe 'POST /api/v1/signin 認証' do
         context '正常なリクエストの場合' do
             it '認証が通ること' do
     
@@ -62,8 +62,25 @@ RSpec.describe "Sessions", type: :request do
     end
 
     describe 'DELETE /api/v1/signout ログアウト' do
-        it 'ログアウトできること' do
-            
+        context 'ログインしているとき' do
+            it 'ログアウトできること' do
+                #認証を通す
+                post '/api/v1/signin', params: post_params
+
+                # APIリクエスト
+                delete '/api/v1/signout' 
+
+                expect(response.status).to eq(204)
+                expect(session[:user_id]).to be(nil)
+
+            end
+        end
+
+        context 'ログインしていないとき' do
+            it '' do
+                #認証を通さずAPIリクエスト
+                delete '/api/v1/signout'
+            end
         end
     end
 end
