@@ -23,8 +23,11 @@ RSpec.describe "Sessions", type: :request do
                 json = JSON.parse(response.body)
 
                 expect(response.status).to eq(200)
-                expect(json['message']).to eq('sign in success')
-                expect(response.header['Set-Cookie']).not_to be(nil)
+                expect(session[:user_id]).to eq user_a.id.to_s
+
+                #レスポンスの確認
+                expect(json['id']).to eq user_a.id
+                expect(json['name']).to eq user_a.name
             end
         end
 
@@ -39,8 +42,12 @@ RSpec.describe "Sessions", type: :request do
                 json = JSON.parse(response.body)
 
                 expect(response.status).to eq(401)
-                expect(json['message']).to eq('wrong user_id')
-                expect(response.header['Set-Cookie']).to be(nil)
+                expect(session[:user_id]).to be(nil)
+
+                #レスポンスの確認
+                expect(json['code']).to eq(Settings.api.error.E0001.code)
+                expect(json['message']).to eq(Settings.api.error.E0001.message)
+                expect(json['details']).to eq("user_id: 0")
             end
         end
 
@@ -55,8 +62,13 @@ RSpec.describe "Sessions", type: :request do
                 json = JSON.parse(response.body)
 
                 expect(response.status).to eq(401)
-                expect(json['message']).to eq('sign in fail')
-                expect(response.header['Set-Cookie']).to be(nil)
+                expect(session[:user_id]).to be(nil)
+
+                #レスポンスの確認
+                expect(json['code']).to eq(Settings.api.error.E0002.code)
+                expect(json['message']).to eq(Settings.api.error.E0002.message)
+                expect(json['details']['user_id']).to eq(user_a.id.to_s)
+                expect(json['details']['password']).to eq('wrong_password')
             end
         end
     end
@@ -77,9 +89,17 @@ RSpec.describe "Sessions", type: :request do
         end
 
         context 'ログインしていないとき' do
-            it '' do
+            it '認証されていないためエラーとなること' do
                 #認証を通さずAPIリクエスト
                 delete '/api/v1/signout'
+                json = JSON.parse(response.body)
+
+                expect(response.status).to eq(401)
+                expect(session[:user_id]).to be(nil)
+
+                #レスポンスを確認する
+                expect(json['code']).to eq(Settings.api.error.E0003.code)
+                expect(json['message']).to eq(Settings.api.error.E0003.message)
             end
         end
     end

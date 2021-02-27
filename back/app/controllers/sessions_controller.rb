@@ -3,19 +3,31 @@ class SessionsController < ApplicationController
 
   # 認証
   def sign_in
+    user_id = session_params[:user_id]
+    password = session_params[:password]
+
     begin
-        user = User.find(session_params[:user_id]).authenticate(session_params[:password])
-    rescue ActiveRecord::RecordNotFound => e
-        api_error = Exceptions::ApiCommonError.new(e)
-        api_error.set_property('E0001', e.message, "user_id: " + session_params[:user_id], 401)
-        raise(api_error)
+        user = User.find(user_id).authenticate(password)
+    rescue => e
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0001.code,
+            Settings.api.error.E0001.message,
+            "user_id: #{user_id}",
+            401
+        )
+        return
     end
 
     if user
-        session[:user_id] = user.id
-        render json: { message: "sign in success" }
-    else 
-        render json: { message: "sign in fail"}, status: 401
+        session[:user_id] = user_id
+        render json: user
+    else
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0002.code,
+            Settings.api.error.E0002.message,
+            { user_id: user_id, password: password },
+            401
+        )
     end
   end
 

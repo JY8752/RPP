@@ -6,7 +6,7 @@ module Exceptions
         attr_accessor(:details)
         attr_accessor(:status)
     
-        def set_property(code, message, details, status) 
+        def initialize(code, message, details, status) 
             @code = code
             @message = message
             @details = details

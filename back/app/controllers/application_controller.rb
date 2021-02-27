@@ -5,11 +5,16 @@ class ApplicationController < ActionController::API
     rescue_from Exception, with: :exception_handler
     rescue_from Exceptions::ApiCommonError, with: :api_common_error_handler
 
+    private
+
     # API実行前に認証が通っていることを確認する
     def check_is_signed_in
         if !session[:user_id]
             # セッションにidが格納されていなければ401エラー
-            render json: { message: "unauthorized" }, status: 401
+            render json: {
+                code: Settings.api.error.E0003.code,
+                message: Settings.api.error.E0003.message,
+            }, status: 401
             return
         end
 
@@ -27,11 +32,10 @@ class ApplicationController < ActionController::API
 
     # 共通エラー以外の全てのエラーを処理する
     def exception_handler(error)
-        #return if error.instance_of?(Exceptions::ApiCommonError)
         render json: {
-            code: 'E999',
-            message: error.message,
-            details: error.name,
+            code: Settings.api.error.E9999.code,
+            message: Settings.api.error.E9999.message,
+            details: error.class.to_s
         }, status: 500
     end
 end
