@@ -3,18 +3,41 @@ class SessionsController < ApplicationController
 
   # 認証
   def sign_in
-    user = User.find_by(name: session_params[:name]).authenticate(params[:password])
-    session[:user_id] = user.id
-    render json: { message: "sign in success" }
+    user_id = session_params[:user_id]
+    password = session_params[:password]
+
+    begin
+        user = User.find(user_id).authenticate(password)
+    rescue => e
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0001.code,
+            Settings.api.error.E0001.message,
+            "user_id: #{user_id}",
+            401
+        )
+        return
+    end
+
+    if user
+        session[:user_id] = user_id
+        render json: user
+    else
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0002.code,
+            Settings.api.error.E0002.message,
+            { user_id: user_id, password: password },
+            401
+        )
+    end
   end
 
   def sign_out
-    session[:user_id] = nil
+    session.delete(:user_id)
   end
 
   private
 
   def session_params
-    params.require(:session).permit(:name, :password)
+    params.require(:session).permit(:user_id, :password)
   end
 end

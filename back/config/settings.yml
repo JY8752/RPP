@@ -1,0 +1,14 @@
+api:
+  error:
+    E0001: #ユーザーが見つからない
+      code: E0001
+      message: user not found...
+    E0002: #パスワードが間違っている
+      code: E0002
+      message: password is wrong...
+    E0003: #認証が通っていない
+      code: E0003
+      message: unauthenticated...
+    E9999: # 想定外のエラー
+      code: E9999
+      message: unexpected error...
