@@ -18,7 +18,7 @@ class ApplicationController < ActionController::API
             return
         end
 
-        @user = User.find(session[:user_id])
+        @current_user = User.find(session[:user_id])
     end
 
     #ApiCommonErrorからjsonを作成する
