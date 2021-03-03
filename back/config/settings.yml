@@ -1,5 +1,6 @@
 api:
   error:
+    #認証
     E0001: #ユーザーが見つからない
       code: E0001
       message: user not found...
@@ -9,6 +10,13 @@ api:
     E0003: #認証が通っていない
       code: E0003
       message: unauthenticated...
+    #users_controller
+    E0004:
+      code: E0004 #ユーザー作成に失敗
+      message: illegal create user params...
+    E0005:
+      code: E0005  #ロール作成に失敗
+      message: illegal create role params...
     E9999: # 想定外のエラー
       code: E9999
       message: unexpected error...

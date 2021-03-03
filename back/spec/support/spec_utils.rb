@@ -1,6 +1,10 @@
 #specを書くための共通処理
 #rails_helper.rbにincludeして使う
-module SpecUtils 
+module SpecUtils
+    ###################################################
+    # APIリクエスト
+    ###################################################
+
     #認証を通す
     def sign_in user_id, password
         post_params = {
@@ -21,6 +25,23 @@ module SpecUtils
         #エラーレスポンスがあるときもあるためパース処理しておく
         parse_json
     end
+
+    #ユーザー作成
+    def create_user(name, password, role)
+        user_params = {
+            user: {
+                name: name,
+                password: password,
+                role: role
+            }
+        }
+        post '/api/v1/users', params: user_params
+        parse_json
+    end
+
+    ###################################################
+    # spec内の共通処理
+    ###################################################
 
     #エラーレスポンスを確認する
     def check_error_response(code, message, details) 

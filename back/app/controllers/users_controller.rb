@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user
+  skip_before_action :check_is_signed_in, only: [:index, :create]
 
   # GET /users
   def index
@@ -15,13 +15,31 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
-    @user = User.new(user_params)
-
-    if @user.save
-      render json: @user, status: :created, location: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
+    user = User.new(name: user_params[:name], password: user_params[:password])
+    
+    # ユーザーの作成に失敗したらエラーレスポンス
+    if !user.save
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0004.code,
+            Settings.api.error.E0004.message,
+            user_params,
+            400
+        )
     end
+
+    # ロールの作成に失敗したらエラーレスポンス
+    role = user.roles.new(role: user_params[:role].to_i, level: 1, enabled: true)
+    if !role.save
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0005.code,
+            Settings.api.error.E0005.message,
+            user_params,
+            400
+        )
+    end
+
+    response = User.joins(:roles).where(id: user.id).select('users.id, name, role, level').take
+    render json: { user: response }, status: 201
   end
 
   # PATCH/PUT /users/1
@@ -39,13 +57,7 @@ class UsersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
-
-    # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:name, :password)
+      params.require(:user).permit(:name, :password, :role)
     end
 end

@@ -10,14 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_23_005300) do
+ActiveRecord::Schema.define(version: 2021_03_03_153412) do
 
   create_table "roles", charset: "utf8mb4", force: :cascade do |t|
-    t.integer "role", null: false
+    t.integer "role", default: 0, null: false
     t.integer "level", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id", null: false
+    t.boolean "enabled", null: false
     t.index ["user_id"], name: "index_roles_on_user_id"
   end
 
@@ -26,6 +27,7 @@ ActiveRecord::Schema.define(version: 2021_02_23_005300) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "password_digest", null: false
+    t.timestamp "delete_date"
   end
 
 end

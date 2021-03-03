@@ -9,7 +9,7 @@ Rails.application.routes.draw do
         delete 'signout', to: 'sessions#sign_out'
 
         # users_controller
-        resources :users
+        post 'users', to: 'users#create'
     end
   end
 end
