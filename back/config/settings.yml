@@ -17,6 +17,9 @@ api:
     E0005:
       code: E0005  #ロール作成に失敗
       message: illegal create role params...
+    E0006:
+      code: E0006
+      message: user records are maximum... #ユーザー件数が既に3件存在する
     E9999: # 想定外のエラー
       code: E9999
       message: unexpected error...

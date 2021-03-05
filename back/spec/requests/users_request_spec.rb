@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
     #ユーザー作成
-    !let(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password') }
+    let!(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password') }
 
     # ユーザー一覧取得
     describe 'GET /api/v1/users' do
@@ -26,33 +26,28 @@ RSpec.describe "Users", type: :request do
             end
             it 'ユーザーが1件新規で作成されること' do
                 #APIリクエスト
-                create_user 'user_a', 'password', 0
+                create_user name: 'user_c', password: 'password'
 
-                #レスポンスを取得する
-                parse_json
-
-                # 作成したユーザーをDBから取得
-                user = User.find(@json[:user][:id].to_i)
-                role = user.roles.where(role: 0).first
-
-                expect(response.status).to eq 201
-                expect(@json[:user][:id]).to eq user.id
-                expect(@json[:user][:name]).to eq user.name
-                expect(@json[:user][:role]).to eq Role.roles[role.role.to_sym]
-                expect(@json[:user][:level]).to eq role.level
-
-                expect(user.delete_date).to be nil
-                expect(role.enabled).to be true
+                #作成したレコード,レスポンスを確認する
+                check_create_user_response
             end
         end
 
         context 'ユーザーが3件存在する場合' do
             before do
-                #2件目のユーザーを作成する
-                FactoryBot.create(:user, name: 'user_b', password: 'password')
+                #2件のユーザーを作成する
+                2.times { FactoryBot.create(:user, name: 'user_b', password: 'password') }
             end
             it 'ユーザーの作成に失敗すること' do
+                #APIリクエスト
+                create_user name: 'user_c', password: 'password'
 
+                # エラーレスポンスを確認する
+                check_error_response(
+                    Settings.api.error.E0006.code,
+                    Settings.api.error.E0006.message,
+                    status: 409
+                )
             end
         end
 
@@ -60,9 +55,15 @@ RSpec.describe "Users", type: :request do
             before do
                 #2件目のユーザーを作成する
                 FactoryBot.create(:user, name: 'user_b', password: 'password')
+                #削除済みユーザーを1件作成する
+                FactoryBot.create(:user, name: 'delete_user', password: 'password', delete_date: Time.zone.now)
             end
             it 'ユーザーが作成できること' do
+                #APIリクエスト
+                create_user name: 'user_c', password: 'password'
 
+                #作成したレコード,レスポンスを確認する
+                check_create_user_response
             end
         end
 

@@ -15,6 +15,16 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
+    # 有効なユーザーが既に3件存在する場合エラーレスポンス
+    enabled_users = User.where(delete_date: nil)
+    if enabled_users.size > 2
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0006.code,
+            Settings.api.error.E0006.message,
+            status: 409
+        )
+    end
+
     user = User.new(name: user_params[:name], password: user_params[:password])
     
     # ユーザーの作成に失敗したらエラーレスポンス
@@ -22,8 +32,8 @@ class UsersController < ApplicationController
         raise Exceptions::ApiCommonError.new(
             Settings.api.error.E0004.code,
             Settings.api.error.E0004.message,
-            user_params,
-            400
+            details: user_params,
+            status: 400
         )
     end
 
@@ -33,8 +43,7 @@ class UsersController < ApplicationController
         raise Exceptions::ApiCommonError.new(
             Settings.api.error.E0005.code,
             Settings.api.error.E0005.message,
-            user_params,
-            400
+            details: user_params
         )
     end
 
@@ -53,7 +62,19 @@ class UsersController < ApplicationController
 
   # DELETE /users/1
   def destroy
-    @user.destroy
+    user = User.find(params[:id].to_i)
+    if user
+        user.update(:delete_date: Time.zone.now)
+        head 204
+    else
+        #ユーザーが見つからなかった
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0001.code,
+            Settings.api.error.E0001.message,
+            details: { user_id: params[:id] },
+            status: 404
+        )
+    end
   end
 
   private
