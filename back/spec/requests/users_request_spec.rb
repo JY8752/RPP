@@ -17,6 +17,7 @@ RSpec.describe "Users", type: :request do
     describe 'Get /api/v1/users/{ user_id }' do
 
     end
+
     # ユーザー作成
     describe 'POST /api/v1/users' do
         context '有効なユーザーが2件のとき' do
@@ -68,12 +69,42 @@ RSpec.describe "Users", type: :request do
         end
 
     end
+
     # ユーザー更新
     describe 'PUT /api/v1/users/{ user_id ' do
 
     end
-    # ユーザー削除
-    describe 'DELETE /api/users/{ user_id' do
 
+    # ユーザー削除
+    describe 'DELETE /api/users/{ user_id }' do
+        before do
+            #認証を通す
+            sign_in(user_a.id, 'password')
+        end
+
+        context 'ユーザーが存在していれば' do
+            it 'ユーザーが削除できること' do
+                #API実施
+                delete_user(user_a.id)
+                #削除できたことを確認する
+                check_delete_user(user_a.id)
+            end
+        end
+
+        context 'ユーザーが存在していなければ' do
+            it 'エラーとなる' do
+                #採番されないid
+                undefined_id = 0
+                #API実施
+                delete_user(undefined_id)
+                #エラーレスポンスを確認する
+                check_error_response(
+                    Settings.api.error.E0001.code,
+                    Settings.api.error.E0001.message,
+                    status: 404
+                )
+            end
+        end
     end
+    
 end

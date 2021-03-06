@@ -62,9 +62,9 @@ class UsersController < ApplicationController
 
   # DELETE /users/1
   def destroy
-    user = User.find(params[:id].to_i)
+    user = User.find_by(id: params[:id])
     if user
-        user.update(:delete_date: Time.zone.now)
+        user.update(delete_date: Time.zone.now)
         head 204
     else
         #ユーザーが見つからなかった

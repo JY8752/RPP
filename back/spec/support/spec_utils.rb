@@ -39,6 +39,11 @@ module SpecUtils
         parse_json
     end
 
+    #ユーザー削除
+    def delete_user(id) 
+        delete "/api/v1/users/#{ id }"
+    end
+
     ###################################################
     # spec内の共通処理
     ###################################################
@@ -75,5 +80,15 @@ module SpecUtils
 
         expect(user.delete_date).to be nil
         expect(role.enabled).to be true
+    end
+
+    #ユーザー削除できたことを確認する
+    def check_delete_user(id)
+        expect(response.status).to eq 204
+
+        user = User.find_by(id: id)
+        expect(user).not_to be nil
+
+        expect(user.delete_date).not_to be nil
     end
 end
