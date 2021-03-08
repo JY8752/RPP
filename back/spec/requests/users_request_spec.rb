@@ -3,13 +3,36 @@ require 'rails_helper'
 RSpec.describe "Users", type: :request do
     #ユーザー作成
     let!(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password') }
+    let!(:role_a) { FactoryBot.create(:role, user_id: user_a.id) }
 
     # ユーザー一覧取得
     describe 'GET /api/v1/users' do
         context 'ユーザーが3件のとき' do
+            before do
+                #ユーザーを2件作成する
+                2.times do
+                    user = FactoryBot.create(:user, name: 'user_b', password: 'password')
+                    FactoryBot.create(:role, user_id: user.id)
+                end
+            end
             it 'ユーザーが3件取得できること' do
-                # 認証を通す
-                sign_in user_a.id, user_a.password
+                #APIリクエスト
+                get_users
+                #リクエストjsonをパースする
+                parse_json
+                #ユーザーが3件取得できたことを確認する
+                expect(response.status).to eq 200
+                expect(@json.size).to eq 3
+
+                check_get_user(index: 0)
+                check_get_user(index: 1)
+                check_get_user(index: 2)
+            end
+        end
+
+        context 'ユーザーが0件のとき' do
+            it 'エラーとならないこと' do
+
             end
         end
     end
@@ -29,8 +52,11 @@ RSpec.describe "Users", type: :request do
                 #APIリクエスト
                 create_user name: 'user_c', password: 'password'
 
+                #jsonレスポンスをパースする
+                parse_json
+
                 #作成したレコード,レスポンスを確認する
-                check_create_user_response
+                check_create_user
             end
         end
 
@@ -63,8 +89,11 @@ RSpec.describe "Users", type: :request do
                 #APIリクエスト
                 create_user name: 'user_c', password: 'password'
 
+                #jsonレスポンスをパースする
+                parse_json
+
                 #作成したレコード,レスポンスを確認する
-                check_create_user_response
+                check_create_user
             end
         end
 
@@ -106,5 +135,4 @@ RSpec.describe "Users", type: :request do
             end
         end
     end
-    
 end

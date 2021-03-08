@@ -3,9 +3,9 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    @users = User.all
-
-    render json: @users
+    #有効ユーザー一覧を取得
+    users = User.joins(:roles).where(delete_date: nil).select('users.id, name, role, level')
+    render json: users
   end
 
   # GET /users/1

@@ -44,6 +44,11 @@ module SpecUtils
         delete "/api/v1/users/#{ id }"
     end
 
+    #ユーザー一覧
+    def get_users()
+        get '/api/v1/users'
+    end
+
     ###################################################
     # spec内の共通処理
     ###################################################
@@ -64,12 +69,11 @@ module SpecUtils
     end
 
     #ユーザー作成レスポンスを確認する
-    def check_create_user_response()
-        #レスポンスを取得する
+    def check_create_user()
+        #jsonレスポンスをパースする
         parse_json
-
         # 作成したユーザーをDBから取得
-        user = User.find(@json[:user][:id].to_i)
+        user = User.find(@json[:user][:id])
         role = user.roles.where(user_id: user.id).first
 
         expect(response.status).to eq 201
@@ -90,5 +94,24 @@ module SpecUtils
         expect(user).not_to be nil
 
         expect(user.delete_date).not_to be nil
+    end
+
+    #ユーザー取得できたことを確認する
+    def check_get_user(index: nil)
+        #json内の指定のインデックスのユーザー
+        json_user = @json[index]
+
+        # ユーザーをDBから取得
+        user = User.find(json_user[:id])
+        role = user.roles.where(user_id: user.id).first
+
+        expect(json_user[:id]).to eq user.id
+        expect(json_user[:name]).to eq user.name
+        expect(json_user[:role]).to eq Role.roles[role.role.to_sym]
+        expect(json_user[:level]).to eq role.level
+
+        expect(user.delete_date).to be nil
+        expect(role.enabled).to be true
+
     end
 end
