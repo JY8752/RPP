@@ -21,7 +21,6 @@ RSpec.describe "Users", type: :request do
                 #リクエストjsonをパースする
                 parse_json
                 #ユーザーが3件取得できたことを確認する
-                expect(response.status).to eq 200
                 expect(@json.size).to eq 3
 
                 check_get_user(index: 0)
@@ -31,14 +30,55 @@ RSpec.describe "Users", type: :request do
         end
 
         context 'ユーザーが0件のとき' do
+            before { User.destroy_all }
             it 'エラーとならないこと' do
+                #APIリクエスト
+                get_users
+                #レスポンスjson をパースする
+                parse_json
 
+                expect(@json.empty?).to be true
             end
         end
     end
+
     #ユーザー取得
     describe 'Get /api/v1/users/{ user_id }' do
+        #認証
+        before { sign_in(user_a.id, 'password') }
 
+        context 'ユーザーが1件以上あるとき' do
+            it 'ユーザーが1件取得できること' do
+                #APIリクエスト
+                get_user(user_a.id)
+                check_get_user
+            end
+            
+            it '削除済みのユーザーを取得できないこと' do
+                #ユーザーaを削除
+                delete_user(user_a.id)
+                #APIリクエスト
+                get_user(user_a.id)
+                check_error_response(
+                    Settings.api.error.E0007.code,
+                    Settings.api.error.E0007.message,
+                    details: user_a.id
+                )
+            end
+        end
+
+        context '存在しないユーザーidを指定した時' do
+            it '404エラーとなること' do
+                #APIリクエスト(採番されないid)
+                get_user(0)
+                check_error_response(
+                    Settings.api.error.E0001.code,
+                    Settings.api.error.E0001.message,
+                    details: 0,
+                    status: 404
+                )
+            end
+        end
     end
 
     # ユーザー作成
@@ -100,7 +140,7 @@ RSpec.describe "Users", type: :request do
     end
 
     # ユーザー更新
-    describe 'PUT /api/v1/users/{ user_id ' do
+    describe 'PUT /api/v1/users/{ user_id } ' do
 
     end
 

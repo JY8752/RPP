@@ -20,6 +20,9 @@ api:
     E0006:
       code: E0006
       message: user records are maximum... #ユーザー件数が既に3件存在する
+    E0007:
+      code: E0007 #ユーザーが既に削除済み
+      message: already deleted user...
     E9999: # 想定外のエラー
       code: E9999
       message: unexpected error...

@@ -49,6 +49,11 @@ module SpecUtils
         get '/api/v1/users'
     end
 
+    #ユーザー取得
+    def get_user(id)
+        get "/api/v1/users/#{ id }"
+    end
+
     ###################################################
     # spec内の共通処理
     ###################################################
@@ -97,9 +102,12 @@ module SpecUtils
     end
 
     #ユーザー取得できたことを確認する
-    def check_get_user(index: nil)
-        #json内の指定のインデックスのユーザー
-        json_user = @json[index]
+    def check_get_user(index: 0)
+        #一覧の場合、指定のインデックスのユーザー情報
+        parse_json
+        json_user = @json.instance_of?(Array) ? @json[index] : @json
+
+        expect(response.status).to eq 200
 
         # ユーザーをDBから取得
         user = User.find(json_user[:id])

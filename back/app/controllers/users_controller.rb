@@ -10,7 +10,27 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
-    render json: @user
+    #ユーザーが見つからない
+    user = User.find_by(id: params[:id])
+    if !user
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0001.code,
+            Settings.api.error.E0001.message,
+            details: params[:id].to_i,
+            status: 404
+        )
+    end
+    #ユーザーが削除済み
+    if user.delete_date
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0007.code,
+            Settings.api.error.E0007.message,
+            details: params[:id].to_i
+        )
+    end
+
+    user = User.joins(:roles).where(id: params[:id]).select('users.id, name, role, level').take
+    render json: user
   end
 
   # POST /users

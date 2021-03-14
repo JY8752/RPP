@@ -13,6 +13,7 @@ Rails.application.routes.draw do
         put 'users/:id', to: 'users#update', id: /\d+/
         delete 'users/:id', to: 'users#destroy', id: /\d+/
         get 'users', to: 'users#index'
+        get 'users/:id', to: 'users#show', id: /\d+/
     end
   end
 end
