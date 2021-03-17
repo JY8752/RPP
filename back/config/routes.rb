@@ -14,7 +14,7 @@ Rails.application.routes.draw do
         delete 'users/:id', to: 'users#destroy', id: /\d+/
         get 'users', to: 'users#index'
         get 'users/:id', to: 'users#show', id: /\d+/
-        put 'users/:id', to: 'users#update', id: /\d+/
+        put 'users/levelup/:id', to: 'users#levelup', id: /\d+/
     end
   end
 end

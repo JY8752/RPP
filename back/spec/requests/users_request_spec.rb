@@ -3,7 +3,9 @@ require 'rails_helper'
 RSpec.describe "Users", type: :request do
     #ユーザー作成
     let!(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password') }
-    let!(:role_a) { FactoryBot.create(:role, user_id: user_a.id) }
+    let!(:role_java) { FactoryBot.create(:role, user_id: user_a.id, role: 0) }
+    let!(:role_ruby) { FactoryBot.create(:role, user_id: user_a.id, role: 1, enabled: false) }
+    let!(:role_rust) { FactoryBot.create(:role, user_id: user_a.id, role: 2, enabled: false) }
 
     # ユーザー一覧取得
     describe 'GET /api/v1/users' do
@@ -143,16 +145,45 @@ RSpec.describe "Users", type: :request do
     describe 'PUT /api/v1/users/{ user_id } ' do
         #認証を通す
         before { sign_in(user_a.id, 'password') }
-        it 'ユーザーを1件更新できること' do
-            #APIリクエスト
-            update_user(id: user_a.id, name: 'update_user', password: 'update', role: Role.roles[:Ruby], level: 2)
-            #結果を確認
-            check_update_user(name: 'update_user', password: 'update', role: Role.roles[:Ruby], level: 2)
+        context 'ユーザーが1件以上存在するとき' do
+            it 'ユーザーを1件更新できること' do
+                #APIリクエスト
+                update_user(id: user_a.id, name: 'update_user', password: 'update', role: Role.roles[:Ruby])
+                #結果を確認
+                check_update_user(name: 'update_user', password: 'update', role: Role.roles[:Ruby])
+            end
+        end
+        context 'ユーザーが存在しないとき' do
+            it 'E0001エラーとなること' do
+                #採番されないid
+                undefined_id = 0
+                #API実施
+                update_user(id: undefined_id)
+                #エラーレスポンスを確認する
+                check_error_response(
+                    Settings.api.error.E0001.code,
+                    Settings.api.error.E0001.message,
+                    status: 404
+                )
+            end
+        end
+        context 'ユーザーが削除済みのとき' do
+            it 'E0007エラーとなること' do
+                #ユーザーaを削除
+                delete_user(user_a.id)
+                #APIリクエスト
+                update_user(id: user_a.id)
+                check_error_response(
+                    Settings.api.error.E0007.code,
+                    Settings.api.error.E0007.message,
+                    details: user_a.id
+                )
+            end
         end
     end
 
     # ユーザー削除
-    describe 'DELETE /api/users/{ user_id }' do
+    describe 'DELETE /api/v1/users/{ user_id }' do
         before do
             #認証を通す
             sign_in(user_a.id, 'password')
@@ -178,6 +209,47 @@ RSpec.describe "Users", type: :request do
                     Settings.api.error.E0001.code,
                     Settings.api.error.E0001.message,
                     status: 404
+                )
+            end
+        end
+    end
+
+    #レベルアップ
+    describe 'PUT /api/v1/users/levelup/{ user_id }' do
+        #認証を通す
+        before { sign_in(user_a.id, 'password') }
+        context 'レベル1の存在しているユーザーを指定したとき' do
+            it 'レベルが２となっていること' do
+                #API実施
+                levelup(user_a.id)
+                #レスポンスを確認する
+                check_get_user
+            end
+        end
+        context '存在しないユーザーを指定したとき' do
+            it 'E0001エラーとなる' do
+                #採番されないid
+                undefined_id = 0
+                #API実施
+                levelup(undefined_id)
+                #エラーレスポンスを確認する
+                check_error_response(
+                    Settings.api.error.E0001.code,
+                    Settings.api.error.E0001.message,
+                    status: 404
+                )
+            end 
+        end
+        context '削除済みのユーザーを指定したとき' do
+            it 'E0007エラーとなること' do
+                #ユーザーaを削除
+                delete_user(user_a.id)
+                #APIリクエスト
+                levelup(user_a.id)
+                check_error_response(
+                    Settings.api.error.E0007.code,
+                    Settings.api.error.E0007.message,
+                    details: user_a.id
                 )
             end
         end

@@ -55,8 +55,13 @@ module SpecUtils
     end
 
     #ユーザー更新
-    def update_user(id:, name:, password:, role:, level:)
-        put "/api/v1/users/#{ id }", params: get_user_params(name, password, role, level)
+    def update_user(id:, name: 'name', password: 'password', role: 0)
+        put "/api/v1/users/#{ id }", params: get_user_params(name, password, role)
+    end
+
+    #レベルアップ
+    def levelup(id)
+        put "/api/v1/users/levelup/#{ id }"
     end
 
     ###################################################
@@ -129,12 +134,12 @@ module SpecUtils
     end
 
     #ユーザー更新できたことを確認する
-    def check_update_user(name:, password:, role:, level:)
+    def check_update_user(name:, password:, role:)
         parse_json
 
         # ユーザーをDBから取得
         user = User.find_by(id: @json[:id])
-        user_role = user.roles.where(user_id: user.id).first
+        user_role = user.roles.where(enabled: true).take
 
         #ステータスの確認
         expect(response.status).to eq 200
@@ -143,26 +148,30 @@ module SpecUtils
         expect(@json[:id]).to eq user.id
         expect(@json[:name]).to eq name
         expect(@json[:role]).to eq role
-        expect(@json[:level]).to eq level
+        expect(@json[:level]).to eq user_role.level
 
         #レコードの確認
-        expect(user.name).to eq name
-        expect(user.authenticate(password)).not_to be false
-        expect(user.delete_date).to be nil
-        expect(Role.roles[user_role.role.to_sym]).to eq role
-        expect(user_role.level).to eq level
-        expect(user_role.enabled).to be true
+        user.roles.map do |role|
+            if role == user_role
+                expect(user.name).to eq name
+                expect(user.authenticate(password)).not_to be false
+                expect(user.delete_date).to be nil
+                expect(Role.roles[user_role.role.to_sym]).to eq role.role_before_type_cast
+                expect(user_role.enabled).to be true
+            else
+                expect(role.enabled).to be false
+            end
+        end
     end
 
     private
 
-    def get_user_params(name, password, role, level)
+    def get_user_params(name, password, role)
         user_params = {
             user: {
                 name: name,
                 password: password,
-                role: role,
-                level: level
+                role: role
             }
         }
     end
