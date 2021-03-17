@@ -29,7 +29,10 @@ class UsersController < ApplicationController
         )
     end
 
-    user = User.joins(:roles).where(id: params[:id]).select('users.id, name, role, level').take
+    user = User.joins(:roles).select('users.id, name, role, level')
+        .where(id: params[:id])
+        .where('roles.enabled = true')
+        .take
     render json: user
   end
 
@@ -67,17 +70,44 @@ class UsersController < ApplicationController
         )
     end
 
-    response = User.joins(:roles).where(id: user.id).select('users.id, name, role, level').take
+    response = User.joins(:roles).select('users.id, name, role, level')
+        .where('roles.enabled = true')
+        .where(id: user.id)
+        .take
     render json: { user: response }, status: 201
   end
 
   # PATCH/PUT /users/1
   def update
-    if @user.update(user_params)
-      render json: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
+    user = User.find_by(id: params[:id])
+    #ユーザーが見つからない
+    if !user
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0001.code,
+            Settings.api.error.E0001.message,
+            details: params[:id].to_i,
+            status: 404
+        )
     end
+    #ユーザーが削除済み
+    if user.delete_date
+        raise Exceptions::ApiCommonError.new(
+            Settings.api.error.E0007.code,
+            Settings.api.error.E0007.message,
+            details: params[:id].to_i
+        )
+    end
+
+    user.update(update_user_params)
+    user.roles.where(enabled: true).take.update(
+        role: update_role_params[:role].to_i, 
+        level: update_role_params[:level].to_i)
+
+    response = User.joins(:roles).select('users.id, name, role, level')
+        .where(id: user.id)
+        .where('roles.enabled = true')
+        .take
+    render json: response
   end
 
   # DELETE /users/1
@@ -100,5 +130,13 @@ class UsersController < ApplicationController
   private
     def user_params
       params.require(:user).permit(:name, :password, :role)
+    end
+
+    def update_user_params
+        params.require(:user).permit(:name, :password)
+    end
+
+    def update_role_params
+        params.require(:user).permit(:role, :level)
     end
 end

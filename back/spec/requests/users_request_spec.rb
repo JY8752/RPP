@@ -141,7 +141,14 @@ RSpec.describe "Users", type: :request do
 
     # ユーザー更新
     describe 'PUT /api/v1/users/{ user_id } ' do
-
+        #認証を通す
+        before { sign_in(user_a.id, 'password') }
+        it 'ユーザーを1件更新できること' do
+            #APIリクエスト
+            update_user(id: user_a.id, name: 'update_user', password: 'update', role: Role.roles[:Ruby], level: 2)
+            #結果を確認
+            check_update_user(name: 'update_user', password: 'update', role: Role.roles[:Ruby], level: 2)
+        end
     end
 
     # ユーザー削除

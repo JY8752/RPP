@@ -54,6 +54,11 @@ module SpecUtils
         get "/api/v1/users/#{ id }"
     end
 
+    #ユーザー更新
+    def update_user(id:, name:, password:, role:, level:)
+        put "/api/v1/users/#{ id }", params: get_user_params(name, password, role, level)
+    end
+
     ###################################################
     # spec内の共通処理
     ###################################################
@@ -121,5 +126,44 @@ module SpecUtils
         expect(user.delete_date).to be nil
         expect(role.enabled).to be true
 
+    end
+
+    #ユーザー更新できたことを確認する
+    def check_update_user(name:, password:, role:, level:)
+        parse_json
+
+        # ユーザーをDBから取得
+        user = User.find_by(id: @json[:id])
+        user_role = user.roles.where(user_id: user.id).first
+
+        #ステータスの確認
+        expect(response.status).to eq 200
+
+        #レスポンスの確認
+        expect(@json[:id]).to eq user.id
+        expect(@json[:name]).to eq name
+        expect(@json[:role]).to eq role
+        expect(@json[:level]).to eq level
+
+        #レコードの確認
+        expect(user.name).to eq name
+        expect(user.authenticate(password)).not_to be false
+        expect(user.delete_date).to be nil
+        expect(Role.roles[user_role.role.to_sym]).to eq role
+        expect(user_role.level).to eq level
+        expect(user_role.enabled).to be true
+    end
+
+    private
+
+    def get_user_params(name, password, role, level)
+        user_params = {
+            user: {
+                name: name,
+                password: password,
+                role: role,
+                level: level
+            }
+        }
     end
 end
