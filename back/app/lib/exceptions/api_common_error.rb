@@ -6,7 +6,7 @@ module Exceptions
         attr_accessor(:details)
         attr_accessor(:status)
     
-        def initialize(code, message, details, status) 
+        def initialize(code, message, details: nil, status: 400) 
             @code = code
             @message = message
             @details = details

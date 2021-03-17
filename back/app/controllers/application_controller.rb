@@ -18,7 +18,7 @@ class ApplicationController < ActionController::API
             return
         end
 
-        @user = User.find(session[:user_id])
+        @current_user = User.find(session[:user_id])
     end
 
     #ApiCommonErrorからjsonを作成する
@@ -32,6 +32,7 @@ class ApplicationController < ActionController::API
 
     # 共通エラー以外の全てのエラーを処理する
     def exception_handler(error)
+        binding.pry
         render json: {
             code: Settings.api.error.E9999.code,
             message: Settings.api.error.E9999.message,
