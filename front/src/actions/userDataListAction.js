@@ -1,9 +1,9 @@
 //ユーザー情報リストを管理するためのActionクラス
 
 module.exports = {
-    TODO
+  getUserList
 }
 
-function TODO() {
-
+function getUserList() {
+  return { type: 'GET_USER_LIST' }
 }

@@ -61,7 +61,8 @@
     </style>
     <script>
         import anime from 'animejs'
-        import userList from '../api/userList.js'
+        import UserAPI from '../api/userAPI.js'
+        import userDataListAction from '../actions/userDataListAction.js'
         import ContinueGame from '../components/login/continue-game.riot'
         import NewGame from '../components/login/new-game.riot'
         export default {
@@ -75,7 +76,25 @@
                 isContinue: false
             },
             onBeforeMount(props, state) {
-                userList()
+                //ユーザー一覧取得API呼び出し
+                UserAPI.getUserList()
+                    .then((res) => {
+                        const userList = res.data
+                        const listItems = this.$$('.nes-container.is-rounded.is-dark ul li')
+
+                        if(userList.length === 0) {
+                            //ユーザー情報が1件もなければ「つづきから」を非活性
+                            listItems[1].children[0].setAttribute('style', 'pointer-events:none; opacity: .5')
+                        } else if(userList.length === 3) {
+                            //ユーザー情報が3件既にあれば「はじめから」を非活性
+                            listItems[0].children[0].setAttribute('style', 'pointer-events:none; opacity: .5')
+                        }
+                        //state更新
+                        this.store.dispatch(userDataListAction.getUserList())
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
             },
             onMounted() {
                 anime({
