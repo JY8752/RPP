@@ -2,9 +2,10 @@
 
 //stateの初期値
 const initialState = {
-  id: '',
+  id: null,
   name: '',
   role: '',
+  level: null,
   password: '',
   isInputForm: true,
   isRoleButtons: false,
@@ -18,6 +19,13 @@ const userData = (state = { users: initialState }, action) => {
   switch(action.type) {
   case 'RESET':
     return initialState
+  case 'ADD_USER':
+    return Object.assign({}, state, {
+      id: action.userData.id,
+      name: action.userData.name,
+      role: action.userData.role,
+      level: action.userData.level
+    })
   case 'ADD_USER_NAME':
     return Object.assign({}, state, { 
       name: action.name,

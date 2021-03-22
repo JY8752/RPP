@@ -2,6 +2,7 @@
 
 module.exports = {
   reset,
+  addUser,
   addUserId,
   addUserName,
   addUserRole,
@@ -26,6 +27,10 @@ const initialState = {
 
 function reset() {
   return { type: 'RESET', initialState }
+}
+
+function addUser(userData) {
+  return { type: 'ADD_USER', userData}
 }
 
 function addUserId(id) {

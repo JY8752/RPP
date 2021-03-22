@@ -17,10 +17,8 @@
                 console.log(props)
             },
             handleClick(e) {
-                console.log(this.props)
                 //親コンポーネントから渡されたイベント、Yes　or Noを返す
                 this.props.observable.trigger(this.props.event, this.props.value, e.target.value)
-                this.props.observable.trigger('confirm userData', this.props.value, 'Yes')
             }
         }
     </script>

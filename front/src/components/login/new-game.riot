@@ -30,7 +30,7 @@
     <confirm-radio
         observable={ obs }
         event={ 'confirm userData' }
-        value={ 'aaaaaa' }
+        value={ '' }
         if={ this.store.getState().userData.isConfirmUserData }
     />
     <style>
@@ -48,6 +48,9 @@
 
         import userDataAction from '../../actions/userDataAction.js'
         import stringsAction from '../../actions/stringsAction.js'
+
+        import UserAPI from '../../api/userAPI.js'
+        import SessionAPI from '../../api/sessionAPI.js'
 
         import observable from '@riotjs/observable'
 
@@ -100,7 +103,25 @@
                 //ユーザー情報の確認ラジオボタンがクリックされたときの処理
                 this.obs.on('confirm userData', (language, val) => {
                     if(val === 'Yes') {
-                        console.log('APIリクエストします')
+                        //ユーザー作成API呼び出し
+                        UserAPI.createUser({ user: this.store.getState().userData })
+                          .then((res) => {
+                            this.store.dispatch(userDataAction.addUser(res.data.user))
+                            //認証処理
+                            const userData = this.store.getState().userData
+                            SessionAPI.signin(userData.id, userData.password)
+                              .then((res) => {
+                                if(res.status === 200) {
+                                  
+                                }
+                              })
+                              .catch((err) => {
+                                console.log(err)
+                              })
+                          })
+                          .catch((err) => {
+                            console.log(err)
+                          })
                     } else {
                         //入力データを初期化
                         this.store.dispatch(userDataAction.reset())
