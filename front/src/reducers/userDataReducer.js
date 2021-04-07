@@ -11,7 +11,8 @@ const initialState = {
   isRoleButtons: false,
   isConfirmLanguage: false,
   isUserData: false,
-  isConfirmUserData: false
+  isConfirmUserData: false,
+  isCreated: false
 }
 
 
@@ -49,6 +50,12 @@ const userData = (state = { users: initialState }, action) => {
       isPasswordForm: false,
       isConfirmUserData: true,
       isUserData: true
+    })
+  case 'CREATED_USER':
+    return Object.assign({}, state, {
+      isUserData: false,
+      isConfirmUserData: false,
+      isCreated: true
     })
   default:
     return state

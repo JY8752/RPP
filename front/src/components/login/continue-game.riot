@@ -1,14 +1,32 @@
 <continue-game>
-    <div class="user-data" each={ user in userData }>
-        <div class="nes-container is-rounded is-dark" if={ user.id !== null }>
+    <div each={ user in userData } if={ !this.store.getState().continueGame.isInputPassword }>
+        <div 
+          class="nes-container is-rounded is-dark" 
+          if={ Object.keys(user).length !== 0 }
+          onclick={ inputPassword }
+        >
             <dt>{ user.id }</dt>
             <dt>{ user.name }</dt>
             <dt>{ user.role }</dt>
         </div>
-        <div class="nes-container is-rounded is-dark" if={ user.id === null }>
+        <div 
+          class="nes-container is-rounded is-dark" 
+          if={ Object.keys(user).length === 0 }
+          onclick={ createUser }
+        >
             <p>ぼうけんの書を作成する</p>
         </div>
     </div>
+
+    <template if={ this.store.getState().continueGame.isInputPassword }>
+      <typed/>
+      <div class="nes-container is-rounded is-dark">
+        <ul>
+            <li><a href="/home">はい</a></li>
+            <li><a href="javascript:void(0)" onclick={ cancel }>いいえ</a></li>
+        </ul>
+      </div>
+    </template>
 
     <style>
         :host {
@@ -28,9 +46,30 @@
     </style>
 
     <script>
+        import ContinueGameAction from '../../actions/continueGameAction.js'
         export default {
             onBeforeMount() {
-                this.userData = this.store.getState().userData.users
+                //state初期化
+                this.store.dispatch(ContinueGameAction.reset())
+                //ユーザー一覧
+                this.userData = this.store.getState().userDataList.users
+                //ユーザーが3件未満なら空オブジェクトを追加
+                while(this.userData.length < 3) {
+                  this.userData.push({})
+                }
+            },
+            inputPassword() {
+              //あいことば入力画面表示
+              this.store.dispatch(ContinueGameAction.inputPassword())
+              this.update()
+            },
+            createUser() {
+
+            },
+            cancel() {
+              //state初期化
+              this.store.dispatch(ContinueGameAction.reset())
+              this.update()
             }
         }
     </script>

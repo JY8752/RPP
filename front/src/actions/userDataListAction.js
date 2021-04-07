@@ -4,6 +4,6 @@ module.exports = {
   getUserList
 }
 
-function getUserList() {
-  return { type: 'GET_USER_LIST' }
+function getUserList(users) {
+  return { type: 'GET_USER_LIST', users: users }
 }

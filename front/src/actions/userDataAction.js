@@ -8,7 +8,8 @@ module.exports = {
   addUserRole,
   addUserPassword,
   disableConfirmLanguageRadio,
-  enableConfirmLanguageRadio
+  enableConfirmLanguageRadio,
+  createdUser
 }
 
 //stateの初期値
@@ -55,4 +56,8 @@ function enableConfirmLanguageRadio() {
 
 function disableConfirmLanguageRadio() {
   return { type: 'DISABLE_CONFIRM_LANGUAGE_RADIO'}
+}
+
+function createdUser() {
+  return { type: 'CREATED_USER' }
 }

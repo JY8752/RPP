@@ -33,6 +33,11 @@
         value={ '' }
         if={ this.store.getState().userData.isConfirmUserData }
     />
+    <a 
+      class="nes-btn"
+      href="/home"
+      if={ this.store.getState().userData.isCreated }
+    >はじまりの画面へ</a>
     <style>
         :host {
             width: 100vh;
@@ -112,7 +117,11 @@
                             SessionAPI.signin(userData.id, userData.password)
                               .then((res) => {
                                 if(res.status === 200) {
-                                  
+                                  console.log('認証成功')
+                                  //ホーム画面への遷移
+                                  this.store.dispatch(stringsAction.createdUserStrings())
+                                  this.store.dispatch(userDataAction.createdUser())
+                                  this.update()
                                 }
                               })
                               .catch((err) => {
