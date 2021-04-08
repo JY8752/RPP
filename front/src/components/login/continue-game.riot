@@ -1,14 +1,45 @@
 <continue-game>
-    <div class="user-data" each={ user in userData }>
-        <div class="nes-container is-rounded is-dark" if={ user.id !== null }>
-            <dt>{ user.id }</dt>
-            <dt>{ user.name }</dt>
-            <dt>{ user.role }</dt>
+    <div each={ user in userData } if={ this.store.getState().continueGame.isUserList }>
+        <div 
+          class="nes-container is-rounded is-dark" 
+          if={ Object.keys(user).length !== 0 }
+          onclick={ inputPassword.bind(this, user.id) }
+        >
+            <dt>id: { user.id }</dt>
+            <dt>なまえ: { user.name }</dt>
+            <dt>職業: { user.role }</dt>
         </div>
-        <div class="nes-container is-rounded is-dark" if={ user.id === null }>
+        <div 
+          class="nes-container is-rounded is-dark" 
+          if={ Object.keys(user).length === 0 }
+          onclick={ createUser }
+        >
             <p>ぼうけんの書を作成する</p>
         </div>
     </div>
+
+    <template if={ this.store.getState().continueGame.isInputPassword }>
+      <typed/>
+      <div class="nes-field is-inline">
+        <form onsubmit={ handleSubmit }>
+            <input 
+                type="text"
+                name="password"
+                class="nes-input is-dark"
+                placeholder="あいことば"
+            />
+            <button type=submit class="nes-btn">けってい</button>
+        </form>
+      </div>
+    </template>
+
+    <template if={ this.store.getState().continueGame.isSuccessAuthentication}>
+      <typed/>
+      <a 
+        class="nes-btn"
+        href="/home"
+      >はじまりの画面へ</a>
+    </template>
 
     <style>
         :host {
@@ -25,12 +56,77 @@
         .nes-container.is-rounded.is-dark dt {
             margin-right: .5rem
         }
+        .nes-container.is-rounded.is-dark:hover {
+          opacity: .8
+        }
     </style>
 
     <script>
+        import ContinueGameAction from '../../actions/continueGameAction.js'
+        import LoginAction from '../../actions/loginAction'
+        import StringsAction from '../../actions/stringsAction'
+
+        import SessionAPI from '../../api/sessionAPI'
+
+        import Typed from '../typed.riot'
+
+        import convert from '../../utility/convertRole.js'
+
         export default {
+            components: {
+              Typed
+            },
             onBeforeMount() {
-                this.userData = this.store.getState().userData.users
+                //state初期化
+                this.store.dispatch(ContinueGameAction.reset())
+                //ユーザー一覧
+                this.userData = this.store.getState().userDataList.users
+                //取得したユーザーのロールを表示用に変換する
+                this.userData.forEach(user => {
+                  user.role = convert(user.role)
+                })
+                //ユーザーが3件未満なら空オブジェクトを追加
+                while(this.userData.length < 3) {
+                  this.userData.push({})
+                }
+            },
+            inputPassword(id) {
+              //あいことば入力画面表示
+              this.store.dispatch(ContinueGameAction.inputPassword(id))
+              this.store.dispatch(StringsAction.inputPasswordStrings())
+              this.update()
+            },
+            createUser() {
+              //新規作成画面へ
+              this.store.dispatch(LoginAction.newGame())
+              //this.update()が効かないので親コンポーネントをupdateする
+              this.props.observable.trigger('update parent')
+            },
+            cancel() {
+              //state初期化
+              this.store.dispatch(ContinueGameAction.reset())
+              this.update()
+            },
+            handleSubmit(e) {
+              e.preventDefault()
+              const id = this.store.getState().continueGame.id
+              const password = e.target.password.value
+
+              //入力されたあいことばで認証
+              SessionAPI.signin(id, password)
+                .then((res) => {
+                  if(res.status === 200) {
+                    //state更新
+                    this.store.dispatch(ContinueGameAction.successAuthentication())
+                    this.store.dispatch(StringsAction.successAuthenticationStrings())
+                    this.update()
+                  } else {
+                    //TODO
+                  }
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
             }
         }
     </script>

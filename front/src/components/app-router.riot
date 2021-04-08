@@ -1,3 +1,26 @@
 <app-router>
-    
+  <route path='/'>
+    <login/>
+  </route>
+  <route path='/sighin'>
+    <login/>
+  </route>
+  <route path='/home'>
+    <app-frame>
+      <home />
+    </app-frame>
+  </route>
+
+  <script>
+    import Login from '../pages/login.riot'
+    import AppFrame from './frame.riot'
+    import Home from '../pages/home.riot'
+    export default {
+      components: {
+        Login,
+        AppFrame,
+        Home
+      }
+    }
+  </script>
 </app-router>
