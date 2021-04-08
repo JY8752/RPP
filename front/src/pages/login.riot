@@ -1,5 +1,5 @@
 <login>
-    <template if={ state.isStart }>
+    <template if={ this.store.getState().login.isStart }>
         <div class="app-logo">
             <h1>RPP</h1>
             <p>~ロールプレイング風のポートフォリオ~</p>
@@ -11,8 +11,8 @@
             </div>
         </div> 
     </template>
-    <new-game if={ state.isNewGame }/>
-    <continue-game if={ state.isContinue }/>
+    <new-game if={ this.store.getState().login.isNewGame }/>
+    <continue-game observable={ obs } if={ this.store.getState().login.isContinueGame }/>
     <style>
         :host {
             font-family:'MochiFont' !important;
@@ -63,19 +63,20 @@
         import anime from 'animejs'
         import UserAPI from '../api/userAPI.js'
         import userDataListAction from '../actions/userDataListAction.js'
+        import LoginAction from '../actions/loginAction.js'
+
         import ContinueGame from '../components/login/continue-game.riot'
         import NewGame from '../components/login/new-game.riot'
+
+        import observable from '@riotjs/observable'
         export default {
             components: {
                 ContinueGame,
                 NewGame
             },
-            state: {
-                isStart: true,
-                isNewGame: false,
-                isContinue: false
-            },
             onBeforeMount(props, state) {
+                //stateの初期化
+                this.store.dispatch(LoginAction.reset())
                 //ユーザー一覧取得API呼び出し
                 UserAPI.getUserList()
                     .then((res) => {
@@ -95,6 +96,10 @@
                     .catch((err) => {
                         console.log(err)
                     })
+                
+                //イベント監視用のobservableインスタンスを作成する
+                this.obs = observable(this)
+                this.obs.on('update parent', () => { this.update() })
             },
             onMounted() {
                 anime({
@@ -105,16 +110,12 @@
                 })
             },
             newGame(e) {
-                this.update({
-                    isStart: false,
-                    isNewGame: true
-                })
+              this.store.dispatch(LoginAction.newGame())
+              this.update()
             },
             continueGame(e) {
-                this.update({
-                    isStart: false,
-                    isContinue: true
-                })
+              this.store.dispatch(LoginAction.continueGame())
+              this.update()
             }
         }
     </script>

@@ -6,29 +6,21 @@
     <login/>
   </route>
   <route path='/home'>
-    <div id="wrapper">
-      <home/>
-    </div>
+    <app-frame>
+      <home />
+    </app-frame>
   </route>
 
   <script>
     import Login from '../pages/login.riot'
+    import AppFrame from './frame.riot'
     import Home from '../pages/home.riot'
     export default {
       components: {
         Login,
+        AppFrame,
         Home
       }
     }
   </script>
-
-  <style>
-    #wrapper {
-        margin-left: 15%;
-        min-height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-  </style>
-
 </app-router>

@@ -2,13 +2,18 @@
 
 module.exports = {
   inputPassword,
-  reset
+  reset,
+  successAuthentication
 }
 
-function inputPassword() {
-  return { type: 'INPUT_PASSWORD' }
+function inputPassword(id) {
+  return { type: 'INPUT_PASSWORD', id: id }
 }
 
 function reset() {
   return { type: 'RESET' }
+}
+
+function successAuthentication() {
+  return { type: 'SUCCESS_AUTHENTICATION' }
 }

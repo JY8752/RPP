@@ -7,7 +7,9 @@ module.exports = {
   selectLanguageStrings,
   enterPasswordStrings,
   confirmUserDataStrings,
-  createdUserStrings
+  createdUserStrings,
+  inputPasswordStrings,
+  successAuthenticationStrings
 }
 
 function reset() {
@@ -36,4 +38,12 @@ function confirmUserDataStrings() {
 
 function createdUserStrings() {
   return { type: 'CREATED_USER_STRINGS' }
+}
+
+function inputPasswordStrings() {
+  return { type: 'INPUT_PASSWORD_STRINGS' }
+}
+
+function successAuthenticationStrings() {
+  return { type: 'SUCCESS_AUTHENTICATION_STRINGS' }
 }

@@ -27,6 +27,17 @@ const createdUserWords = [
   'はじまりの画面に移動してください。'
 ]
 
+//ぼうけんを再開する
+const inputPasswordWords = [
+  'あいことばを入力してください。'
+]
+
+//認証成功
+const successAuthenticationWords = [
+  'あいことばを確認しました。',
+  'ぼうけんを再開します。'
+]
+
 
 const strings = (state = { words: [] }, action) => {
   switch(action.type) {
@@ -44,6 +55,10 @@ const strings = (state = { words: [] }, action) => {
     return Object.assign({}, state, { words: confirmUserDataWords })
   case 'CREATED_USER_STRINGS':
     return Object.assign({}, state, { words: createdUserWords })
+  case 'INPUT_PASSWORD_STRINGS':
+    return Object.assign({}, state, { words: inputPasswordWords })
+  case 'SUCCESS_AUTHENTICATION_STRINGS':
+    return Object.assign({}, state, { words: successAuthenticationWords })
   default:
     return state
   }
