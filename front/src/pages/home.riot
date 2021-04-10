@@ -1,8 +1,45 @@
 <home>
-<h1>テスト</h1>
+  <typed/>
+  <a class="nes-btn is-warning" href="/battle">魔王城に行く</a>
 <style>
   :host {
+    font-family:'MochiFont' !important;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     background-color: #000;
   }
 </style>
+<script>
+  import Typed from '../components/typed.riot'
+  import UserAPI from '../api/userAPI'
+  import CurrentUserDataAction from '../actions/currentUserDataAction'
+  import StringsAction from '../actions/stringsAction'
+  export default {
+    components: {
+      Typed
+    },
+    onBeforeMount(props) {
+      //ログインユーザーをstateに保存
+      const id = this.store.getState().continueGame.id
+      UserAPI.getUser(id)
+        .then((res) => {
+          const { status, data } = res
+          if(status === 200) {
+            this.store.dispatch(CurrentUserDataAction.registerUser(data))
+            //親コンポーネントにユーザー名を渡す
+            props.observable.trigger('add user name', data.name)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+        //ホーム画面に表示する文言を更新
+        this.store.dispatch(StringsAction.homeStrings())
+    }
+  }
+</script>
 </home>

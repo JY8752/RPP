@@ -2,40 +2,43 @@
     <navigation>
         <div class="ui visible sidebar lists inverted  vertical menu ">
             <div class="item sidebar-head">
-                <a class="ui logo icon image" href="/">
+                <a class="ui logo icon image" href="/user">
                     <i class="user icon"></i>
                 </a>
-                <a href="/">
-                    ユーザー
+                <a href="/user">
+                  { userName }
                 </a>
             </div>
             <div class="item">
                 <div class="list">
                     <div class="item">
-                            <a href="/">ぼうけんのしょ</a>
+                            <a href="/home">ほーむ</a>
                     </div>
                     <div class="item">
-                            <a href="/">ぼうけんのしょ</a>
+                            <a href="/user">せってい</a>
                     </div>
                     <div class="item">
-                            <a href="/">ぼうけんのしょ</a>
+                            <a href="/status">ステータス</a>
                     </div>
                     <div class="item">
-                            <a href="/">ぼうけんのしょ</a>
+                            <a href="/battle">魔王城にいく</a>
                     </div>
                     <div class="item">
-                            <a href="/">ぼうけんのしょ</a>
+                            <a href="/itemshop"  style="pointer-events:none; opacity: .5;">道具屋</a>
                     </div>
                     <div class="item">
-                            <a href="/">ぼうけんのしょ</a>
+                            <a href="/weaponshop"  style="pointer-events:none; opacity: .5;">武器屋</a>
+                    </div>
+                    <div class="item">
+                            <a href="/jobchange"  style="pointer-events:none; opacity: .5;">ダーマ神殿</a>
                     </div>
                 </div>
             </div>
             <div class="item logout">
-                <a>
+                <a href="/" onclick={ handleSignout }>
                     ろぐあうと
                 </a>
-                <a href="/">
+                <a href="/" onclick={ handleSignout }>
                     <i class="sign-out icon"></i>
                 </a>
             </div>
@@ -43,9 +46,26 @@
     </navigation>
 
     <script>
+        import SessionAPI from '../api/sessionAPI'
         export default {
-            handleLogout() {
-                this.service.logout()
+            onBeforeMount(props) {
+              //サイドバーにユーザー名を表示する
+              props.observable.on('add user name', (name) => {
+                this.userName = name
+                this.update()
+              })
+            },
+            handleSignout() {
+              //認証情報の初期化
+                SessionAPI.signout()
+                  .then((res) => {
+                    if(res.status === 204) {
+                      console.log('サインアウトしました')
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err)
+                  })
             }
         }
     </script>

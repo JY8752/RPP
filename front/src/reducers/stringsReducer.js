@@ -38,6 +38,12 @@ const successAuthenticationWords = [
   'ぼうけんを再開します。'
 ]
 
+//ホーム画面表示
+const homeWords = [
+  '魔王城でバグが発生しています。',
+  '装備を整えて魔王城に向かってください。'
+]
+
 
 const strings = (state = { words: [] }, action) => {
   switch(action.type) {
@@ -59,6 +65,8 @@ const strings = (state = { words: [] }, action) => {
     return Object.assign({}, state, { words: inputPasswordWords })
   case 'SUCCESS_AUTHENTICATION_STRINGS':
     return Object.assign({}, state, { words: successAuthenticationWords })
+  case 'HOME_STRINGS':
+    return Object.assign({}, state, { words: homeWords })
   default:
     return state
   }
