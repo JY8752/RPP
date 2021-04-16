@@ -1,0 +1,23 @@
+<app-dialog>
+  <dialog class="nes-dialog is-dark is-rounded" id="dialog-dark-rounded">
+    <form method="dialog">
+      <p class="title">{ props.title }</p>
+      <p>{ props.text }</p>
+      <menu class="dialog-menu">
+        <button class="nes-btn">いいえ</button>
+        <button class="nes-btn is-primary" onclick={ props.clickhandler }>はい</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <style>
+    .dialog-menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dialog-menu button:first-child {
+      margin-right: 1rem;
+    }
+  </style>
+</app-dialog>

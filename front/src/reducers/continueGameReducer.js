@@ -1,7 +1,7 @@
 //つづきから画面のstateを更新するためのReduer
 
 const initialState = {
-  id: '',
+  id: null,
   isUserList: true,
   isInputPassword: false,
   isSuccessAuthentication: false

@@ -12,22 +12,8 @@ module.exports = {
   createdUser
 }
 
-//stateの初期値
-const initialState = {
-  id: '',
-  name: '',
-  role: '',
-  password: '',
-  isInputForm: true,
-  isRoleButtons: false,
-  isConfirmLanguage: false,
-  isPasswordForm: false,
-  isUserData: false,
-  isConfirmUserData: false
-}
-
 function reset() {
-  return { type: 'RESET', initialState }
+  return { type: 'RESET' }
 }
 
 function addUser(userData) {
