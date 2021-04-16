@@ -54,6 +54,17 @@
                 this.userName = name
                 this.update()
               })
+              //イベント検知したら更新する
+              props.observable.on('parent update', () => {
+                this.userName = this.store.getState().currentUserData.name
+                this.update()
+              })
+              //上記イベントでユーザー名が渡ってくるのはHome画面をマウントした時のみ
+              //stateにユーザー名があればセットする
+              const currentUser = this.store.getState().currentUserData
+              if(Object.keys(currentUser).length !== 0) {
+                this.userName = currentUser.name
+              }
             },
             handleSignout() {
               //認証情報の初期化

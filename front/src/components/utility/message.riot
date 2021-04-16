@@ -1,0 +1,31 @@
+<message>
+  <div id="message-block">
+    <p class="nes-balloon from-right">{ message }</p> 
+    <i class="nes-octocat animate"></i>
+  </div>
+
+  <style>
+    #message-block {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+  </style>
+
+  <script>
+    export default {
+      onBeforeMount(props) {
+        const messageType = props.messageType
+        switch(messageType) {
+          case 'SUCCESS_UPDATE_USER':
+            this.message = '[success!] ユーザーのデータをこうしんしました。'
+            break
+          default:
+            console.log(`メッセージタイプが不正です messageType: ${ messageType }`)
+            this.message = ''
+        }
+      }
+    }
+  </script>
+</message>

@@ -1,0 +1,98 @@
+<setting>
+  <form onsubmit={ handleSubmit }>
+    <div class="nes-field">
+      <label for="name">なまえ</label>
+      <input type="text" id="name" class="nes-input" value={ userName }>
+    </div>
+    <div class="nes-field">
+      <label for="password">あいことば</label>
+      <input type="text" id="password" class="nes-input" placeholder="へんこうする場合は入力してください">
+    </div>
+    <button type="submit" class="nes-btn">こうしんする</button>
+  </form>
+
+  <button class="nes-btn is-error" onclick={ dialoghandler }>ぼうけんの書をさくじょ</button>
+
+  <message messageType={ messageType } if={ messageType } />
+
+  <app-dialog
+    title="ぼうけんの書はもとにはもどせません。" 
+    text="ほんとうにぼうけんの書をさくじょしますか？"
+    clickhandler={ deleteUser }
+  />
+  <style>
+    .nes-field label {
+      color: #fff;
+    }
+    .nes-field {
+      margin-bottom: 2rem;
+    }
+    .nes-btn.is-error {
+      margin-top: 2rem;
+    }
+  </style>
+  <script>
+    import UserAPI from '../api/userAPI.js'
+    import currentUserDataAction from '../actions/currentUserDataAction'
+    import Message from '../components/utility/message.riot'
+    import AppDialog from '../components/utility/app-dialog.riot'
+    export default {
+      components: {
+        Message,
+        AppDialog
+      },
+      onBeforeMount() {
+        //メッセージを初期化
+        this.messageType = null
+        //入力エリアに表示する
+        const user = this.store.getState().currentUserData
+        this.userName = user.name
+      },
+      handleSubmit(e) {
+        const id = this.store.getState().currentUserData.id
+        const name = e.target.name.value
+        const password = e.target.password.value
+        e.preventDefault()
+
+        //ユーザー情報更新
+        UserAPI.updateUser(id, { user: 
+          {
+            name: name, 
+            password: password
+          }
+        })
+        .then((res) => {
+          const { status, data } = res
+          if(status === 200) {
+            //ログインユーザーのstateを更新
+            this.store.dispatch(currentUserDataAction.registerUser(data))
+            this.props.observable.trigger('parent update')
+            //メッセージ更新
+            this.messageType = 'SUCCESS_UPDATE_USER'
+            this.update()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      },
+      dialoghandler() {
+        //ダイアログ出す
+        this.$('#dialog-dark-rounded').showModal()
+      },
+      deleteUser() {
+        const id = this.store.getState().currentUserData.id
+        UserAPI.deleteUser(id)
+          .then(res => {
+            const { status, data } = res
+            if(status === 204) {
+              window.location.href = '/'
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    }
+  </script>
+</setting>
