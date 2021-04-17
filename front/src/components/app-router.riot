@@ -15,19 +15,33 @@
       <setting observable={ obs }/> 
     </app-frame>
   </route>
+  <route path='/status'>
+    <app-frame observable={ obs }>
+      <status observable={ obs }/> 
+    </app-frame>
+  </route>
+  <route path='/battle'>
+    <app-frame observable={ obs }>
+      <battle observable={ obs }/> 
+    </app-frame>
+  </route>
 
   <script>
     import Login from '../pages/login.riot'
     import AppFrame from './frame.riot'
     import Home from '../pages/home.riot'
     import Setting from '../pages/setting.riot'
+    import Status from '../pages/status.riot'
+    import Battle from '../pages/battle.riot'
     import observable from '@riotjs/observable'
     export default {
       components: {
         Login,
         AppFrame,
         Home,
-        Setting
+        Setting,
+        Status,
+        Battle
       },
       onBeforeMount() {
         this.obs = observable(this)
