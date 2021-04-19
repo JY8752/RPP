@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-    before_action :set_user, only: [:show, :update, :destroy, :levelup]
+    before_action :set_user, only: [:show, :update, :destroy, :levelup, :status]
     skip_before_action :check_is_signed_in, only: [:index, :create]
 
   # GET /users
@@ -13,7 +13,7 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
-    render json: create_user_response(params[:id])
+    render json: user_response(params[:id])
   end
 
   # POST /users
@@ -59,7 +59,7 @@ class UsersController < ApplicationController
         end
     end
 
-    render json: { user: create_user_response(user.id) }, status: 201
+    render json: { user: user_response(user.id) }, status: 201
   end
 
   # PATCH/PUT /users/1
@@ -77,7 +77,7 @@ class UsersController < ApplicationController
         end
     end
 
-    render json: create_user_response(@user.id)
+    render json: user_response(@user.id)
   end
 
   # DELETE /users/1
@@ -90,7 +90,16 @@ class UsersController < ApplicationController
   def levelup
     role = @user.roles.where(enabled: true).take
     role.update(level: role.level + 1)
-    render json: create_user_response(@user.id)
+    render json: user_response(@user.id)
+  end
+
+  # GET /users/status/1
+  def status
+    render json: User.joins(roles: :status)
+      .select('users.id, role, level, hp, mp, attack, defence, next_level_point')
+      .where(id: params[:id])
+      .where('roles.enabled = true')
+      .take
   end
 
   private
@@ -119,7 +128,7 @@ class UsersController < ApplicationController
     end
 
     #レスポンスのユーザー情報を作成する
-    def create_user_response(user_id)
+    def user_response(user_id)
         User.joins(:roles).select('users.id, name, role, level')
             .where(id: user_id)
             .where('roles.enabled = true')

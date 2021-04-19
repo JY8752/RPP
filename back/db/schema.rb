@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_03_153412) do
+ActiveRecord::Schema.define(version: 2021_04_18_134037) do
 
   create_table "roles", charset: "utf8mb4", force: :cascade do |t|
     t.integer "role", default: 0, null: false
@@ -22,6 +22,18 @@ ActiveRecord::Schema.define(version: 2021_03_03_153412) do
     t.index ["user_id"], name: "index_roles_on_user_id"
   end
 
+  create_table "statuses", charset: "utf8mb4", force: :cascade do |t|
+    t.bigint "role_id", null: false
+    t.integer "hp", null: false
+    t.integer "mp", null: false
+    t.integer "attack", null: false
+    t.integer "defence", null: false
+    t.integer "next_level_point", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["role_id"], name: "index_statuses_on_role_id"
+  end
+
   create_table "users", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -30,4 +42,5 @@ ActiveRecord::Schema.define(version: 2021_03_03_153412) do
     t.timestamp "delete_date"
   end
 
+  add_foreign_key "statuses", "roles"
 end

@@ -64,6 +64,11 @@ module SpecUtils
         put "/api/v1/users/levelup/#{ id }"
     end
 
+    #ステータス取得
+    def get_user_status(id)
+      get "/api/v1/users/status/#{ id }"
+    end
+
     ###################################################
     # spec内の共通処理
     ###################################################
@@ -162,6 +167,26 @@ module SpecUtils
                 expect(role.enabled).to be false
             end
         end
+    end
+
+    #ユーザー作成レスポンスを確認する
+    def check_get_status()
+        #jsonレスポンスをパースする
+        parse_json
+        # 作成したユーザーをDBから取得
+        user = User.find_by(id: @json[:id])
+        role = user.roles.where(enabled: true).first
+        status = role.status
+
+        expect(response.status).to eq 200
+        expect(@json[:id]).to eq user.id
+        expect(@json[:role]).to eq role.role_before_type_cast
+        expect(@json[:level]).to eq role.level
+        expect(@json[:hp]).to eq status.hp
+        expect(@json[:mp]).to eq status.mp
+        expect(@json[:attack]).to eq status.attack
+        expect(@json[:defence]).to eq status.defence
+        expect(@json[:next_level_point]).to eq status.next_level_point
     end
 
     private
