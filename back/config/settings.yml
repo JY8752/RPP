@@ -26,3 +26,43 @@ api:
     E9999: # 想定外のエラー
       code: E9999
       message: unexpected error...
+  status:
+    Java:
+      default:
+        hp: 40
+        mp: 20
+        attack: 15
+        defence: 20
+        next_level_point: 10
+      update:
+        hp: 10
+        mp: 10
+        attack: 10
+        defence: 10
+        next_level_point_base_value: 10
+    Ruby:
+      default:
+        hp: 30
+        mp: 30
+        attack: 20
+        defence: 10
+        next_level_point: 10
+      update:
+        hp: 10
+        mp: 10
+        attack: 10
+        defence: 10
+        next_level_point_base_value: 10
+    Rust:
+      default:
+        hp: 50
+        mp: 30
+        attack: 10
+        defence: 20
+        next_level_point: 10
+      update:
+        hp: 10
+        mp: 10
+        attack: 10
+        defence: 10
+        next_level_point_base_value: 10

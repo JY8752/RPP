@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-    before_action :set_user, only: [:show, :update, :destroy, :levelup]
+    before_action :set_user, only: [:show, :update, :destroy, :levelup, :status]
     skip_before_action :check_is_signed_in, only: [:index, :create]
 
   # GET /users
@@ -13,7 +13,7 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
-    render json: create_user_response(params[:id])
+    render json: user_response(params[:id])
   end
 
   # POST /users
@@ -57,9 +57,21 @@ class UsersController < ApplicationController
                 details: user_params
             )
         end
+
+        # 各ロールの初期ステータス登録
+        default_value = role.get_default_settings
+
+        # ステータスレコード作成
+        status = role.create_status(
+          hp: default_value.hp,
+          mp: default_value.mp,
+          attack: default_value.attack,
+          defence: default_value.defence,
+          next_level_point: default_value.next_level_point
+        )
     end
 
-    render json: { user: create_user_response(user.id) }, status: 201
+    render json: { user: user_response(user.id) }, status: 201
   end
 
   # PATCH/PUT /users/1
@@ -77,7 +89,7 @@ class UsersController < ApplicationController
         end
     end
 
-    render json: create_user_response(@user.id)
+    render json: user_response(@user.id)
   end
 
   # DELETE /users/1
@@ -88,9 +100,36 @@ class UsersController < ApplicationController
 
   # PUT /users/levelup/1
   def levelup
-    role = @user.roles.where(enabled: true).take
-    role.update(level: role.level + 1)
-    render json: create_user_response(@user.id)
+    #レベルをあげる
+    next_level = @role.level + 1
+    @role.update(level: next_level)
+    #ステータス更新のベースを取得
+    update_base_point = @role.get_update_settings
+    #ステータスを更新
+    hp = @status.hp + update_base_point.hp
+    mp = @status.mp + update_base_point.mp
+    attack = @status.attack + update_base_point.attack
+    defence = @status.defence + update_base_point.defence
+    next_level_point = next_level * update_base_point.next_level_point_base_value
+
+    @status.update(
+      hp: hp,
+      mp: mp,
+      attack: attack,
+      defence: defence,
+      next_level_point: next_level_point
+    )
+    
+    render json: user_response(@user.id)
+  end
+
+  # GET /users/status/1
+  def status
+    render json: User.joins(roles: :status)
+      .select('users.id, role, level, hp, mp, attack, defence, next_level_point')
+      .where(id: params[:id])
+      .where('roles.enabled = true')
+      .take
   end
 
   private
@@ -115,11 +154,14 @@ class UsersController < ApplicationController
                 details: params[:id].to_i
             )
         end
-        @user
+        #ロール
+        @role = @user.roles.where(enabled: true).take
+        #ステータス
+        @status = @role.status
     end
 
     #レスポンスのユーザー情報を作成する
-    def create_user_response(user_id)
+    def user_response(user_id)
         User.joins(:roles).select('users.id, name, role, level')
             .where(id: user_id)
             .where('roles.enabled = true')

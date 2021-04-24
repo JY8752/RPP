@@ -6,6 +6,7 @@ RSpec.describe "Users", type: :request do
     let!(:role_java) { FactoryBot.create(:role, user_id: user_a.id, role: 0) }
     let!(:role_ruby) { FactoryBot.create(:role, user_id: user_a.id, role: 1, enabled: false) }
     let!(:role_rust) { FactoryBot.create(:role, user_id: user_a.id, role: 2, enabled: false) }
+    let!(:user_a_status) { FactoryBot.create(:status, role_id: role_java.id) }
 
     # ユーザー一覧取得
     describe 'GET /api/v1/users' do
@@ -225,6 +226,14 @@ RSpec.describe "Users", type: :request do
                 #レスポンスを確認する
                 check_get_user
             end
+            it 'ステータスが更新されていること' do
+              #レベルアップ前のステータス
+              status = user_a.roles.where(enabled: true).first.status
+              #API実施
+              levelup(user_a.id)
+              #ステータスを確認する
+              check_updated_status user_id: user_a.id, before_status: status
+            end
         end
         context '存在しないユーザーを指定したとき' do
             it 'E0001エラーとなる' do
@@ -253,5 +262,33 @@ RSpec.describe "Users", type: :request do
                 )
             end
         end
+    end
+
+    #ステータス
+    describe 'GET /api/v1/users/status/{ user_id }' do
+      #認証を通す
+      before { sign_in(user_a.id, 'password') }
+      context '存在しているユーザーを指定した時' do
+        it 'ステータスが取得できること' do
+          # ステータス取得
+          get_user_status(user_a.id)
+          # レスポンスを確認
+          check_get_status
+        end
+      end
+      context '存在していないユーザーを指定した時' do
+        it 'E0001エラーとなること' do
+          #採番されないid
+          undefined_id = 0
+          #ステータス取得
+          get_user_status(undefined_id)
+          #エラーレスポンスを確認する
+          check_error_response(
+              Settings.api.error.E0001.code,
+              Settings.api.error.E0001.message,
+              status: 404
+          )
+        end
+      end
     end
 end
