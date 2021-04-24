@@ -226,6 +226,14 @@ RSpec.describe "Users", type: :request do
                 #レスポンスを確認する
                 check_get_user
             end
+            it 'ステータスが更新されていること' do
+              #レベルアップ前のステータス
+              status = user_a.roles.where(enabled: true).first.status
+              #API実施
+              levelup(user_a.id)
+              #ステータスを確認する
+              check_updated_status user_id: user_a.id, before_status: status
+            end
         end
         context '存在しないユーザーを指定したとき' do
             it 'E0001エラーとなる' do

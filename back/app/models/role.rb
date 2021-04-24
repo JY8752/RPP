@@ -19,4 +19,26 @@ class Role < ApplicationRecord
     has_one :status
 
     enum role: { Java: 0, Ruby: 1, Rust: 2 }
+
+    #レベルアップ時のベースポイントを返す
+    def get_update_settings
+      if self.Java?
+        Settings.api.status.Java.update
+      elsif self.Ruby?
+        Settings.api.status.Ruby.update
+      else
+        Settings.api.status.Rust.update
+      end
+    end
+
+    #デフォルトのステータスを返す
+    def get_default_settings
+      if self.Java?
+        Settings.api.status.Java.default
+      elsif self.Ruby?
+        Settings.api.status.Ruby.default
+      else
+        Settings.api.status.Rust.default
+      end
+    end
 end

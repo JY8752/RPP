@@ -96,6 +96,7 @@ module SpecUtils
         user = User.find(@json[:user][:id])
         role = user.roles.where(user_id: user.id).first
 
+        #レスポンスの確認
         expect(response.status).to eq 201
         expect(@json[:user][:id]).to eq user.id
         expect(@json[:user][:name]).to eq user.name
@@ -104,6 +105,20 @@ module SpecUtils
 
         expect(user.delete_date).to be nil
         expect(role.enabled).to be true
+
+        #作成したロールのステータス確認
+        expect(3).to eq user.roles.size
+        user.roles.each do |role|
+          status = role.status
+          #デフォルト値取得
+          default_value = role.get_default_settings
+
+          expect(default_value.hp).to eq status.hp
+          expect(default_value.mp).to eq status.mp
+          expect(default_value.attack).to eq status.attack
+          expect(default_value.defence).to eq status.defence
+          expect(default_value.next_level_point).to eq status.next_level_point
+        end
     end
 
     #ユーザー削除できたことを確認する
@@ -187,6 +202,22 @@ module SpecUtils
         expect(@json[:attack]).to eq status.attack
         expect(@json[:defence]).to eq status.defence
         expect(@json[:next_level_point]).to eq status.next_level_point
+    end
+
+    def check_updated_status(user_id:, before_status:)
+      #ロール
+      role = User.find_by(id: user_id)
+        .roles.where(enabled: true).first
+      #レベルアップ後のステータス
+      after_status = role.status
+      #設定値
+      update_settings = role.get_update_settings
+
+      expect(before_status.hp + update_settings.hp).to eq after_status.hp
+      expect(before_status.mp + update_settings.mp).to eq after_status.mp
+      expect(before_status.attack + update_settings.attack).to eq after_status.attack
+      expect(before_status.defence + update_settings.defence).to eq after_status.defence
+      expect(update_settings.next_level_point_base_value * role.level).to eq after_status.next_level_point
     end
 
     private

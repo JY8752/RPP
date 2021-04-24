@@ -57,6 +57,18 @@ class UsersController < ApplicationController
                 details: user_params
             )
         end
+
+        # 各ロールの初期ステータス登録
+        default_value = role.get_default_settings
+
+        # ステータスレコード作成
+        status = role.create_status(
+          hp: default_value.hp,
+          mp: default_value.mp,
+          attack: default_value.attack,
+          defence: default_value.defence,
+          next_level_point: default_value.next_level_point
+        )
     end
 
     render json: { user: user_response(user.id) }, status: 201
@@ -88,8 +100,26 @@ class UsersController < ApplicationController
 
   # PUT /users/levelup/1
   def levelup
-    role = @user.roles.where(enabled: true).take
-    role.update(level: role.level + 1)
+    #レベルをあげる
+    next_level = @role.level + 1
+    @role.update(level: next_level)
+    #ステータス更新のベースを取得
+    update_base_point = @role.get_update_settings
+    #ステータスを更新
+    hp = @status.hp + update_base_point.hp
+    mp = @status.mp + update_base_point.mp
+    attack = @status.attack + update_base_point.attack
+    defence = @status.defence + update_base_point.defence
+    next_level_point = next_level * update_base_point.next_level_point_base_value
+
+    @status.update(
+      hp: hp,
+      mp: mp,
+      attack: attack,
+      defence: defence,
+      next_level_point: next_level_point
+    )
+    
     render json: user_response(@user.id)
   end
 
@@ -124,7 +154,10 @@ class UsersController < ApplicationController
                 details: params[:id].to_i
             )
         end
-        @user
+        #ロール
+        @role = @user.roles.where(enabled: true).take
+        #ステータス
+        @status = @role.status
     end
 
     #レスポンスのユーザー情報を作成する

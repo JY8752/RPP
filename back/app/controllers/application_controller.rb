@@ -32,6 +32,10 @@ class ApplicationController < ActionController::API
 
     # 共通エラー以外の全てのエラーを処理する
     def exception_handler(error)
+        #エラー内容がわからないのでログ出力
+        logger.error { "予期せぬエラーが発生しました error: #{error.class}" }
+        logger.error { error.backtrace.join("\n") }
+
         render json: {
             code: Settings.api.error.E9999.code,
             message: Settings.api.error.E9999.message,
