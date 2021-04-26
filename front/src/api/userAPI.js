@@ -15,5 +15,8 @@ export default {
   },
   deleteUser(id) {
     return instance.delete(`/users/${id}`)
+  },
+  getUserStatus(id) {
+    return instance.get(`/users/status/${id}`)
   }
 }

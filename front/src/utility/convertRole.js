@@ -9,7 +9,7 @@ const convert = (roleNum) => {
   case 2:
     return 'Rustプログラマー'
   default:
-    return 'フリーランス'
+    return roleNum
   }
 }
 

@@ -140,6 +140,12 @@ RSpec.describe "Users", type: :request do
             end
         end
 
+        #エラー検証
+        it 'エラーが出ないこと' do
+          params = {"user":{"id":nil,"name":"yamanaka","role":"Java","level":nil,"password":"password","isInputForm":false,"isRoleButtons":false,"isConfirmLanguage":false,"isUserData":true,"isConfirmUserData":true,"isCreated":false,"isPasswordForm":false}}
+          #APIリクエスト
+          post '/api/v1/users', params: params
+        end
     end
 
     # ユーザー更新
