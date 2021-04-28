@@ -2,39 +2,57 @@
   <div class="nes-table-responsive">
     <table class="nes-table is-bordered is-dark">
       <tbody>
-        <tr>
-          <th>しょくぎょう</th>
-          <td>テスト</td>
-        </tr>
-        <tr>
-          <th>レベル</th>
-          <td>テスト</td>
-        </tr>
-        <tr>
-          <th>HP</th>
-          <td>テスト</td>
-        </tr>
-        <tr>
-          <th>MP</th>
-          <td>テスト</td>
-        </tr>
-        <tr>
-          <th>こうげき力</th>
-          <td>テスト</td>
-        </tr>
-        <tr>
-          <th>ぼうぎょ力</th>
-          <td>テスト</td>
-        </tr>
-        <tr>
-          <th>とくぎ</th>
-          <td>テスト, テスト,テスト</td>
-        </tr>
-        <tr>
-          <th>次のレベルまで</th>
-          <td>5000</td>
-        </tr>
+        <template each={ item in userStatus }>
+          <tr>
+            <th>{ item[0] }</th>
+            <td>{ item[1] }</td>
+          </tr>
+        </template>
       </tbody>
     </table>
   </div>
+
+  <style>
+  </style>
+  
+  <script>
+    import UserAPI from '../api/userAPI'
+    import convert from '../utility/convertRole'
+    export default {
+      onBeforeMount() {
+        //ステータス取得
+        UserAPI.getUserStatus(this.store.getState().currentUserData.id)
+          .then(res => {
+            if(res.status === 200) {
+              //オブジェクトのkeyを表示用に変換
+              const newResData = Object.fromEntries(
+                Object.entries(res.data)
+                  .map(([key, value]) => [this.convert(key), key === 'role' ? convert(value) : value])
+              )
+              this.userStatus = Object.entries(newResData)
+              //ここで更新しないと表示されないため更新
+              this.update()
+            }
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      },
+      //ステータスレスポンスの変換処理
+      convert(data) {
+        switch(data) {
+          case 'role':
+            return 'しょくぎょう'
+          case 'attack':
+            return 'こうげき力'
+          case 'defence':
+            return 'ぼうぎょ力'
+          case 'next_level_point':
+            return '次のレベルまで'
+          default:
+            return data
+        }
+      }
+    }
+  </script>
 </status>

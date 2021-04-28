@@ -24,7 +24,6 @@
     onBeforeMount(props) {
       //ログインユーザーをstateに保存
       let id = this.store.getState().continueGame.id
-      console.log(`idは${id}`)
       if(id === null) {
         //つづきからでなければ新規作成ユーザーデータからid取得
         id = this.store.getState().userData.id
