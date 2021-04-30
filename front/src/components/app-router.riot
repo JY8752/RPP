@@ -20,9 +20,14 @@
       <status observable={ obs }/> 
     </app-frame>
   </route>
-  <route path='/battle'>
+  <route path='/stage'>
     <app-frame observable={ obs }>
-      <battle observable={ obs }/> 
+      <stage observable={ obs }/> 
+    </app-frame>
+  </route>
+  <route path='/battle/:stageId'>
+    <app-frame observable={ obs }>
+      <battle observable={ obs } stageId={ route.params.stageId }/> 
     </app-frame>
   </route>
 
@@ -32,6 +37,7 @@
     import Home from '../pages/home.riot'
     import Setting from '../pages/setting.riot'
     import Status from '../pages/status.riot'
+    import Stage from '../pages/stage.riot'
     import Battle from '../pages/battle.riot'
     import observable from '@riotjs/observable'
     export default {
@@ -41,6 +47,7 @@
         Home,
         Setting,
         Status,
+        Stage,
         Battle
       },
       onBeforeMount() {

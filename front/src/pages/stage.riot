@@ -1,0 +1,77 @@
+<stage>
+  <div id="stage-container">
+    <div
+      each={ (stage, index) in stages}
+      class="nes-container is-dark is-rounded"
+      data-stage-id={ index + 1 }
+      onclick={ dialoghandler }
+    >{ stage }</div>
+  </div>
+
+  <app-dialog
+    title={ title }
+    text="このステージをデバックします。よろしいですか？"
+    clickhandler={ startBattle }
+  />
+
+  <style>
+    #stage-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .nes-container.is-dark.is-rounded {
+      width: 30%;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .nes-container.is-dark.is-rounded i {
+      margin-right: .5rem;
+    }
+  </style>
+  <script>
+    import AppDialog from '../components/utility/app-dialog.riot'
+    export default {
+      components: {
+        AppDialog
+      },
+      onBeforeMount() {
+        //ステージ選択エリア生成 とりあえず6ステージ
+        const allStageCount = 6
+        this.stages = [...Array(allStageCount)].map((_, i) => `ステージ${i + 1}`)
+      },
+      onMounted() {
+        //ステージの進行度を取得
+        const stageLevel = 1
+        //DOM取得
+        const stageElements = this.$$('.nes-container.is-dark.is-rounded')
+        //選択不可のステージを非活性
+        stageElements.forEach((elm, index) => {
+          if(index + 1 > stageLevel) {
+            elm.setAttribute('style', 'pointer-events:none; opacity: .5')
+          }
+        })
+        //クリア済みのステージにトロフィー表示
+        stageElements.forEach((elm, index) => {
+          if(index + 1 < stageLevel) {
+            const trophy = document.createElement('i')
+            trophy.setAttribute('class', 'nes-icon trophy is-small')
+            elm.insertAdjacentElement('afterbegin', trophy);
+          }
+        })
+      },
+      dialoghandler(e) {
+        //ダイアログ出す
+        this.title = e.target.outerText
+        //あまりよくない気がするが一旦直接stateに
+        this.state.stageId = e.target.dataset.stageId
+        this.$('#dialog-dark-rounded').showModal()
+      },
+      startBattle() {
+        //遷移
+        this.router.push(`/battle/${ this.state.stageId }`)
+      }
+    }
+  </script>
+</stage>
