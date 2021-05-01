@@ -43,7 +43,7 @@
       },
       onMounted() {
         //ステージの進行度を取得
-        const stageLevel = 1
+        const stageLevel = this.store.getState().currentUserData.stage_level
         //DOM取得
         const stageElements = this.$$('.nes-container.is-dark.is-rounded')
         //選択不可のステージを非活性

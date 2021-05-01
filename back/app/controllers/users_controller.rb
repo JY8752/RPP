@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   # GET /users
   def index
     #有効ユーザー一覧を取得
-    users = User.joins(:roles).select('users.id, name, role, level')
+    users = User.joins(:roles).select('users.id, name, stage_level, role, level')
         .where(delete_date: nil)
         .where('roles.enabled = true')
     render json: users
@@ -28,7 +28,7 @@ class UsersController < ApplicationController
         )
     end
 
-    user = User.new(name: user_params[:name], password: user_params[:password])
+    user = User.new(name: user_params[:name], password: user_params[:password], stage_level: 1)
     
     # ユーザーの作成に失敗したらエラーレスポンス
     if !user.save
@@ -162,7 +162,7 @@ class UsersController < ApplicationController
 
     #レスポンスのユーザー情報を作成する
     def user_response(user_id)
-        User.joins(:roles).select('users.id, name, role, level')
+        User.joins(:roles).select('users.id, name, stage_level, role, level')
             .where(id: user_id)
             .where('roles.enabled = true')
             .take 
@@ -173,7 +173,7 @@ class UsersController < ApplicationController
     end
 
     def update_user_params
-        params.require(:user).permit(:name, :password)
+        params.require(:user).permit(:name, :password, :stage_level)
     end
 
     def update_role_params

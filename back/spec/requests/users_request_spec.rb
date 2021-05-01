@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
     #ユーザー作成
-    let!(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password') }
+    let!(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password', stage_level: 1) }
     let!(:role_java) { FactoryBot.create(:role, user_id: user_a.id, role: 0) }
     let!(:role_ruby) { FactoryBot.create(:role, user_id: user_a.id, role: 1, enabled: false) }
     let!(:role_rust) { FactoryBot.create(:role, user_id: user_a.id, role: 2, enabled: false) }
@@ -14,7 +14,7 @@ RSpec.describe "Users", type: :request do
             before do
                 #ユーザーを2件作成する
                 2.times do
-                    user = FactoryBot.create(:user, name: 'user_b', password: 'password')
+                    user = FactoryBot.create(:user, name: 'user_b', password: 'password', stage_level: 1)
                     FactoryBot.create(:role, user_id: user.id)
                 end
             end
@@ -89,7 +89,7 @@ RSpec.describe "Users", type: :request do
         context '有効なユーザーが2件のとき' do
             before do
                 #2件目のユーザーを作成する
-                FactoryBot.create(:user, name: 'user_b', password: 'password')
+                FactoryBot.create(:user, name: 'user_b', password: 'password', stage_level: 1)
             end
             it 'ユーザーが1件新規で作成されること' do
                 #APIリクエスト
@@ -106,7 +106,7 @@ RSpec.describe "Users", type: :request do
         context 'ユーザーが3件存在する場合' do
             before do
                 #2件のユーザーを作成する
-                2.times { FactoryBot.create(:user, name: 'user_b', password: 'password') }
+                2.times { FactoryBot.create(:user, name: 'user_b', password: 'password', stage_level: 1) }
             end
             it 'ユーザーの作成に失敗すること' do
                 #APIリクエスト
@@ -124,9 +124,9 @@ RSpec.describe "Users", type: :request do
         context '削除済みユーザーが1件有効ユーザーが2件の場合' do
             before do
                 #2件目のユーザーを作成する
-                FactoryBot.create(:user, name: 'user_b', password: 'password')
+                FactoryBot.create(:user, name: 'user_b', password: 'password', stage_level: 1)
                 #削除済みユーザーを1件作成する
-                FactoryBot.create(:user, name: 'delete_user', password: 'password', delete_date: Time.zone.now)
+                FactoryBot.create(:user, name: 'delete_user', password: 'password', delete_date: Time.zone.now, stage_level: 1)
             end
             it 'ユーザーが作成できること' do
                 #APIリクエスト

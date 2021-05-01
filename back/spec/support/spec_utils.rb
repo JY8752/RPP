@@ -106,6 +106,10 @@ module SpecUtils
         expect(user.delete_date).to be nil
         expect(role.enabled).to be true
 
+        #ステージレベル
+        expect(user.stage_level).to eq 1
+        expect(@json[:user][:stage_level]).to eq 1
+
         #作成したロールのステータス確認
         expect(3).to eq user.roles.size
         user.roles.each do |role|
@@ -147,6 +151,7 @@ module SpecUtils
         expect(json_user[:name]).to eq user.name
         expect(json_user[:role]).to eq Role.roles[role.role.to_sym]
         expect(json_user[:level]).to eq role.level
+        expect(json_user[:stage_level]).to eq user.stage_level
 
         expect(user.delete_date).to be nil
         expect(role.enabled).to be true
@@ -169,6 +174,7 @@ module SpecUtils
         expect(@json[:name]).to eq name
         expect(@json[:role]).to eq role
         expect(@json[:level]).to eq user_role.level
+        expect(@json[:stage_level]).to eq user.stage_level
 
         #レコードの確認
         user.roles.map do |role|
