@@ -66,3 +66,6 @@ api:
         attack: 10
         defence: 10
         next_level_point_base_value: 10
+  enemy:
+    - stage_level: 1
+      name: Duke
