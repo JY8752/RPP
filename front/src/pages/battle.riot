@@ -1,9 +1,198 @@
 <battle>
-
+  <div id="enemy-area">
+    <img
+      src={ imageFileData }
+      alt="enemy"
+      width="100"
+      height="100"
+    />
+    <div id="enemy-life">
+      <p>{ enemyName }</p>
+      <progress
+        class="nes-progress is-primary" 
+        value={ this.store.getState().battleData.enemy.hp }
+        max={ enemyMaxHp }
+      ></progress>
+    </div>
+  </div>
+  <div id="comand-container">
+    <div class="nes-container is-dark is-rounded">
+      <p>{ this.store.getState().currentUserData.name }</p>
+      <p>HP: { this.store.getState().battleData.user.hp }</p>
+      <p>MP: { this.store.getState().battleData.user.mp }</p>
+    </div>
+    <div class="nes-container is-dark is-rounded">
+      <a href="javascript:void(0)" onclick={ attackHandler }>たたかう</a>
+      <a href="javascript:void(0)" onclick={ deffenceHandler }>ぼうぎょ</a>
+      <a href="javascript:void(0)" style="pointer-events: none; opacity: .5" onclick={ specialHandler }>とくぎ</a>
+    </div>
+    <typed/>
+  </div>
+  <style>
+    #enemy-area {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+    img {
+      margin-top: 8rem;
+    }
+    #enemy-life {
+      width: 200px;
+    }
+    #enemy-life p {
+      font-family:'MochiFont' !important;
+      color: #fff;
+      margin-bottom: 0;
+      margin-top: 1rem;
+    }
+    #enemy-life progress {
+      height: 20px;
+    }
+    #comand-container {
+      margin-top: 7rem;
+      display: flex;
+      justify-content: center;
+    }
+    #comand-container .nes-container.is-dark.is-rounded a {
+      display: block;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+  </style>
   <script>
+    import EnemyAPI from '../api/enemyAPI'
+    import UserAPI from '../api/userAPI'
+
+    import Typed from '../components/typed.riot'
+
+    import StringsAction from '../actions/stringsAction'
+    import StatusAction from '../actions/statusAction'
+    import BattleAction from '../actions/battleAction'
+
+    import sleep from '../utility/sleep'
+    import { attackAnime, damageAnime } from '../utility/anime'
     export default {
+      components: {
+        Typed
+      },
       onBeforeMount(props) {
-        console.log(props.stageId)
+        //ボス情報取得
+        EnemyAPI.getEnemy(props.stageId)
+          .then(res => {
+            const { status, data } = res
+            if(status === 200) {
+              //画像データ表示
+              this.imageFileData = `data:image/png;base64,${data.image_data}`
+              //ボスの名前
+              this.enemyName = data.name
+              //ボスの最大HP
+              this.enemyMaxHp = 30
+              //初期メッセージ表示
+              this.store.dispatch(StringsAction.changeStrings([`${this.enemyName}があらわれた。`]))
+              //stateにボス情報保存
+              this.store.dispatch(BattleAction.addEnemy({
+                name: data.name,
+                hp: 30,
+                action_pattern: data.action_pattern,
+                experience_point: 10
+              }))
+
+              //自分のステータス情報取得
+              const id = this.store.getState().currentUserData.id
+              UserAPI.getUserStatus(id)
+                .then(res => {
+                  const { status, data } = res
+                  if(status === 200) {
+                    this.store.dispatch(BattleAction.addBattleUser({
+                      hp: data.hp,
+                      mp: data.mp,
+                      attack: data.attack,
+                      defence: data.defence,
+                      next_level_point: data.next_level_point
+                    }))
+                    //画面更新
+                    this.update()
+                  }
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+      attackHandler(e) {
+        //ボス名
+        const enemyName = this.store.getState().battleData.enemy.name
+        //ボスの現在のHP
+        const enemyLife = this.store.getState().battleData.enemy.hp
+        //倒したときの獲得経験値
+        const experiencePoint = this.store.getState().battleData.enemy.experience_point
+        //プレイヤー名
+        const userName = this.store.getState().currentUserData.name
+        //プレイヤーの攻撃値
+        const userAttack = this.store.getState().battleData.user.attack
+        //ボスの行動パターンの現在地
+        const actionPatternIndex = this.store.getState().battleData.enemy.action_pattern_index
+        //ボスの現在の行動パターン
+        const enemyAction = this.store.getState().battleData.enemy.action_pattern[actionPatternIndex]
+
+        //プレーヤーのターン
+        //こうげき文言表示
+        this.store.dispatch(StringsAction.changeStrings([`${ userName }のこうげき。`]))
+        this.update()
+
+        //アタックアニメーション
+        attackAnime('#enemy-area img')
+
+        //少し待ってからダメージ値表示
+        sleep(3000)
+          .then(() => {
+            this.store.dispatch(StringsAction.changeStrings([`${ userAttack }のダメージ。`]))
+            this.update()
+          })
+          .then(() => {
+            //ボスのライフが0になったら
+            if(enemyLife - userAttack <= 0) {
+              userAttackWords.push(`${ enemyName }をたおした。`)
+              userAttackWords.push(`${ experiencePoint }の経験値をかくとくした。`)
+
+              //レベルアップAPI → クリアAPI
+              //経験値更新
+              //ステージレベル更新
+              //経験値が0になったらレベルアップ
+              //bodyパラメーターに獲得経験値
+
+              //応答にレベルアップしたかのフラグ
+
+              //レベルアップしていたら文言追加
+
+              this.update()
+              return
+            } else {
+              //ボスのターン
+              //少し待ってからボスのこうげき文言表示
+              sleep(3000)
+                .then(() => {
+                  this.store.dispatch(StringsAction.changeStrings([
+                    enemyAction.message,
+                    `${enemyAction.attack_point}のダメージ`
+                  ]))
+                  this.update()
+                  //ダメージアニメーション
+                  damageAnime()
+                })
+            }
+          })
+      },
+      deffenceHandler(e) {
+
+      },
+      specialHandler(e) {
+        //TODO
       }
     }
   </script>

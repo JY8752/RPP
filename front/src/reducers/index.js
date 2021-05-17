@@ -6,6 +6,7 @@ import continueGame from './continueGameReducer'
 import login from './loginReducer'
 import currentUserData from './currentUserDataReducer'
 import userStatus from './statusReducer'
+import battleData from './battleReducer'
 
 export default combineReducers({
   userDataList,
@@ -14,5 +15,6 @@ export default combineReducers({
   continueGame,
   login,
   currentUserData,
-  userStatus
+  userStatus,
+  battleData
 })
