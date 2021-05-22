@@ -3,6 +3,7 @@
 //初期state
 const init = {
   user: {
+    level: 0,
     hp: 0,
     mp: 0,
     attack: 0,
@@ -35,6 +36,7 @@ const battleData = (state = init, action) => {
   case 'ADD_BATTLE_USER':
     return Object.assign({}, state, {
       user: {
+        level: data.level,
         hp: data.hp,
         mp: data.mp,
         attack: data.attack,
@@ -42,6 +44,19 @@ const battleData = (state = init, action) => {
         next_level_point: data.next_level_point
       }
     })
+  case 'UPDATE_BATTLE_RESULT':
+    return {
+      ...state,
+      user: {
+        ...state.user,
+        hp: data.userLife
+      },
+      enemy: {
+        ...state.enemy,
+        hp: data.enemyLife,
+        action_pattern_index: data.actionIndex
+      }
+    }
   default:
     return state
   }
