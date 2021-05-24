@@ -189,19 +189,18 @@
                   this.text = 'ホームに戻ります。'
                   this.update()
 
-                  //TODO クリアしたのでステージレベル更新
-
                   //少し待ってから
                   sleep(4000)
+                    .then(() => {
+                      //ボスクリア後処理
+                      
+                    })
                     .then(() => {
                       //レベルアップしていたら文言表示
                       if(afterUserNextLevelPoint <= 0) {
                         this.store.dispatch(StringsAction.changeStrings([`${userName}のレベルが${userLevel + 1}にあがりました。`]))
                         this.update()
                       }
-                    })
-                    .then(() => {
-                      //TODO 獲得経験値更新
                     })
                     .then(() => {
                       //少し待ってからダイアログ表示

@@ -36,7 +36,10 @@ RSpec.describe "Enemies", type: :request do
       third_turn_pattern = @json[:action_pattern][2]
       expect(third_turn_pattern[:turn_count]).to eq 3
       expect(third_turn_pattern[:attack_point]).to eq 10
-      expect(third_turn_pattern[:message]).to eq 'dukeは変数のあたいをnullに変えた。\n[Error] NullPointerException'
+      expect(third_turn_pattern[:message]).to eq 'dukeは変数のあたいをnullに変えた。<br>[Error] NullPointerException'
+
+      expect(@json[:hp]).to eq Enemies::EnemiesConst::DUKE_HP
+      expect(@json[:experience_point]).to eq Enemies::EnemiesConst::DUKE_EXPERIENCE_POINT
     end
   end
 end

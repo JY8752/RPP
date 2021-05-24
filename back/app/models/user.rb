@@ -15,4 +15,11 @@ class User < ApplicationRecord
     has_many :roles
 
     validates :name, presence: true
+
+    #初回ステージクリアならステージレベルをあげる
+    def update_stage_level(clear_stage_level)
+      if clear_stage_level == self.stage_level
+        self.update(stage_level: clear_stage_level + 1)
+      end
+    end
 end

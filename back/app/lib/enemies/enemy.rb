@@ -7,12 +7,16 @@ module Enemies
     attr_accessor :stage_level
     attr_accessor :binary
     attr_accessor :action_pattern
+    attr_accessor :hp
+    attr_accessor :experience_point
   
-    def initialize(name:, stage_level:, binary:, action_pattern:)
+    def initialize(name:, stage_level:, binary:, action_pattern:, hp:, experience_point:)
       @name = name
       @stage_level = stage_level
       @binary = binary
       @action_pattern = action_pattern
+      @hp = hp
+      @experience_point = experience_point
     end
   
     def self.get_one_action_pattern(message, turn_count:, attack_point:)
@@ -30,7 +34,9 @@ module Enemies
         name: @name,
         stage_level: @stage_level,
         image_data: base64,
-        action_pattern: @action_pattern
+        action_pattern: @action_pattern,
+        hp: @hp,
+        experience_point: @experience_point
       }
       detail_hash
     end

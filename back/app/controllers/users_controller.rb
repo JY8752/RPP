@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-    before_action :set_user, only: [:show, :update, :destroy, :levelup, :status]
+    before_action :set_user, only: [:show, :update, :destroy, :stage_clear, :status]
     skip_before_action :check_is_signed_in, only: [:index, :create]
 
   # GET /users
@@ -98,28 +98,31 @@ class UsersController < ApplicationController
     head 204
   end
 
-  # PUT /users/levelup/1
-  def levelup
-    #レベルをあげる
-    next_level = @role.level + 1
-    @role.update(level: next_level)
-    #ステータス更新のベースを取得
-    update_base_point = @role.get_update_settings
-    #ステータスを更新
-    hp = @status.hp + update_base_point.hp
-    mp = @status.mp + update_base_point.mp
-    attack = @status.attack + update_base_point.attack
-    defence = @status.defence + update_base_point.defence
-    next_level_point = next_level * update_base_point.next_level_point_base_value
+  # PUT /users/clear/1
+  # body_parameter
+  # result: {
+  #   clear_stage_level: 1,
+  #   get_experience_point: 10
+  # }
+  def stage_clear
+    #クリアしたステージが初回ならステージレベルをあげる
+    @user.update_stage_level stage_clear_params[:clear_stage_level]
 
-    @status.update(
-      hp: hp,
-      mp: mp,
-      attack: attack,
-      defence: defence,
-      next_level_point: next_level_point
-    )
-    
+    after_next_level_point = @status.next_level_point - stage_clear_params[:get_experience_point]
+
+    if after_next_level_point <= 0
+      #レベルをあげる
+      next_level = @role.level + 1
+      @role.update(level: next_level)
+      #ステータス更新のベースを取得
+      update_base_point = @role.get_update_settings
+      #ステータスを更新
+      @status.update_status(next_level, update_base_point)
+    else
+      #獲得経験値で更新
+      @status.update(next_level_point: after_next_level_point)
+    end
+
     render json: user_response(@user.id)
   end
 
@@ -178,5 +181,9 @@ class UsersController < ApplicationController
 
     def update_role_params
         params.require(:user).permit(:role)
+    end
+
+    def stage_clear_params
+      params.require(:result).permit(:clear_stage_level, :get_experience_point)
     end
 end
