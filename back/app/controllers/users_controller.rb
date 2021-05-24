@@ -108,7 +108,7 @@ class UsersController < ApplicationController
     #クリアしたステージが初回ならステージレベルをあげる
     @user.update_stage_level stage_clear_params[:clear_stage_level]
 
-    after_next_level_point = @status.next_level_point - stage_clear_params[:get_experience_point]
+    after_next_level_point = @status.next_level_point - stage_clear_params[:get_experience_point].to_i
 
     if after_next_level_point <= 0
       #レベルをあげる

@@ -59,9 +59,14 @@ module SpecUtils
         put "/api/v1/users/#{ id }", params: get_user_params(name, password, role)
     end
 
-    #レベルアップ
-    def levelup(id)
-        put "/api/v1/users/levelup/#{ id }"
+    #ステージクリア
+    def clear(id:, enemy:)
+        put "/api/v1/users/clear/#{ id }", params: { 
+          result: {
+            clear_stage_level: enemy.get_detail[:stage_level],
+            get_experience_point: enemy.get_detail[:experience_point]
+          }
+        }
     end
 
     #ステータス取得

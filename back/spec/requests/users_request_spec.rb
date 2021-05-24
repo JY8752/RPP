@@ -221,14 +221,16 @@ RSpec.describe "Users", type: :request do
         end
     end
 
-    #レベルアップ
-    describe 'PUT /api/v1/users/levelup/{ user_id }' do
+    #ステージクリア
+    describe 'PUT /api/v1/users/clear/{ user_id }' do
         #認証を通す
         before { sign_in(user_a.id, 'password') }
-        context 'レベル1の存在しているユーザーを指定したとき' do
+        #ステージ1 dukeインスタンス
+        let(:duke) { Enemies::Duke.new('Duke', 1) }
+        context 'stage_level1をクリアしたとき' do
             it 'レベルが２となっていること' do
                 #API実施
-                levelup(user_a.id)
+                clear(id: user_a.id, enemy: duke)
                 #レスポンスを確認する
                 check_get_user
             end
@@ -236,7 +238,7 @@ RSpec.describe "Users", type: :request do
               #レベルアップ前のステータス
               status = user_a.roles.where(enabled: true).first.status
               #API実施
-              levelup(user_a.id)
+              clear(id: user_a.id, enemy: duke)
               #ステータスを確認する
               check_updated_status user_id: user_a.id, before_status: status
             end
@@ -246,7 +248,7 @@ RSpec.describe "Users", type: :request do
                 #採番されないid
                 undefined_id = 0
                 #API実施
-                levelup(undefined_id)
+                clear(id: undefined_id, enemy: duke)
                 #エラーレスポンスを確認する
                 check_error_response(
                     Settings.api.error.E0001.code,
@@ -260,7 +262,7 @@ RSpec.describe "Users", type: :request do
                 #ユーザーaを削除
                 delete_user(user_a.id)
                 #APIリクエスト
-                levelup(user_a.id)
+                clear(id: user_a.id, enemy: duke)
                 check_error_response(
                     Settings.api.error.E0007.code,
                     Settings.api.error.E0007.message,
