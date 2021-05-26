@@ -94,15 +94,15 @@
               //ボスの名前
               this.enemyName = data.name
               //ボスの最大HP
-              this.enemyMaxHp = 30
+              this.enemyMaxHp = data.hp
               //初期メッセージ表示
               this.store.dispatch(StringsAction.changeStrings([`${this.enemyName}があらわれた。`]))
               //stateにボス情報保存
               this.store.dispatch(BattleAction.addEnemy({
                 name: data.name,
-                hp: 30,
+                hp: data.hp,
                 action_pattern: data.action_pattern,
-                experience_point: 10
+                experience_point: data.experience_point
               }))
 
               //自分のステータス情報取得
@@ -176,8 +176,7 @@
                   //バトル前の次のレベルまでに必要な経験値
                   const userNextLevelPoint = this.store.getState().battleData.user.next_level_point
                   //バトル後の次のレベルまでに必要な経験値
-                  //const afterUserNextLevelPoint = userNextLevelPoint - experiencePoint
-                  const afterUserNextLevelPoint = 0
+                  const afterUserNextLevelPoint = userNextLevelPoint - experiencePoint
 
                   //一旦、ボスクリア文言表示
                   this.store.dispatch(StringsAction.changeStrings([
@@ -192,8 +191,10 @@
                   //少し待ってから
                   sleep(4000)
                     .then(() => {
+                      const id = this.store.getState().currentUserData.id
+                      const clearStageLevel = this.props.stageId
                       //ボスクリア後処理
-                      
+                      UserAPI.stageClear(id, clearStageLevel, experiencePoint).catch(err => console.log(err))
                     })
                     .then(() => {
                       //レベルアップしていたら文言表示
@@ -204,7 +205,7 @@
                     })
                     .then(() => {
                       //少し待ってからダイアログ表示
-                      sleep(3000).then(() => { this.dialogHandler() })
+                      sleep(3000).then(() => this.dialogHandler())
                     })
                 })
             } else {

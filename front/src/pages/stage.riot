@@ -69,8 +69,13 @@
         this.$('#dialog-dark-rounded').showModal()
       },
       startBattle() {
-        //遷移
-        this.router.push(`/battle/${ this.state.stageId }`)
+        if(this.state.stageId > 1) {
+          //ステージ2以降は開発中
+          this.router.push('/notfound')
+        } else {
+          //遷移
+          this.router.push(`/battle/${ this.state.stageId }`)
+        }
       }
     }
   </script>

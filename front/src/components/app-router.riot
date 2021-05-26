@@ -30,6 +30,11 @@
       <battle observable={ obs } stageId={ route.params.stageId }/> 
     </app-frame>
   </route>
+  <route path='/notfound'>
+    <app-frame observable={ obs }>
+      <notfound observable={ obs }/> 
+    </app-frame>
+  </route>
 
   <script>
     import Login from '../pages/login.riot'
@@ -39,6 +44,7 @@
     import Status from '../pages/status.riot'
     import Stage from '../pages/stage.riot'
     import Battle from '../pages/battle.riot'
+    import Notfound from '../pages/notfound.riot'
     import observable from '@riotjs/observable'
     export default {
       components: {
@@ -48,7 +54,8 @@
         Setting,
         Status,
         Stage,
-        Battle
+        Battle,
+        Notfound
       },
       onBeforeMount() {
         this.obs = observable(this)
