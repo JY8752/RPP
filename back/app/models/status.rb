@@ -22,4 +22,21 @@
 #
 class Status < ApplicationRecord
   belongs_to :role
+
+  #レベルアップ時のステータス更新
+  def update_status(next_level, update_base_point)
+    hp = self.hp + update_base_point.hp
+    mp = self.mp + update_base_point.mp
+    attack = self.attack + update_base_point.attack
+    defence = self.defence + update_base_point.defence
+    next_level_point = next_level * update_base_point.next_level_point_base_value
+
+    self.update(
+      hp: hp,
+      mp: mp,
+      attack: attack,
+      defence: defence,
+      next_level_point: next_level_point
+    )
+  end
 end

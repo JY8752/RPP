@@ -1,2 +1,306 @@
 <battle>
+  <div id="enemy-area">
+    <img
+      src={ imageFileData }
+      alt="enemy"
+      width="100"
+      height="100"
+    />
+    <div id="enemy-life">
+      <p>{ enemyName }</p>
+      <progress
+        class="nes-progress is-primary" 
+        value={ this.store.getState().battleData.enemy.hp }
+        max={ enemyMaxHp }
+      ></progress>
+    </div>
+  </div>
+  <div id="comand-container">
+    <div class="nes-container is-dark is-rounded">
+      <p>LV: { this.store.getState().battleData.user.level }</p>
+      <p>{ this.store.getState().currentUserData.name }</p>
+      <p>HP: { this.store.getState().battleData.user.hp }</p>
+      <p>MP: { this.store.getState().battleData.user.mp }</p>
+    </div>
+    <div class="nes-container is-dark is-rounded">
+      <a href="javascript:void(0)" onclick={ attackHandler }>たたかう</a>
+      <a href="javascript:void(0)" onclick={ deffenceHandler }>ぼうぎょ</a>
+      <a href="javascript:void(0)" style="pointer-events: none; opacity: .5" onclick={ specialHandler }>とくぎ</a>
+    </div>
+    <typed/>
+  </div>
+  <back-home-dialog
+    title={ title }
+    text={ text }
+  />
+  <style>
+    #enemy-area {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+    img {
+      margin-top: 8rem;
+    }
+    #enemy-life {
+      width: 200px;
+    }
+    #enemy-life p {
+      font-family:'MochiFont' !important;
+      color: #fff;
+      margin-bottom: 0;
+      margin-top: 1rem;
+    }
+    #enemy-life progress {
+      height: 20px;
+    }
+    #comand-container {
+      margin-top: 7rem;
+      display: flex;
+      justify-content: center;
+    }
+    #comand-container .nes-container.is-dark.is-rounded a {
+      display: block;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+  </style>
+  <script>
+    import EnemyAPI from '../api/enemyAPI'
+    import UserAPI from '../api/userAPI'
+
+    import Typed from '../components/typed.riot'
+    import BackHomeDialog from '../components/utility/back-home-dialog.riot'
+
+    import StringsAction from '../actions/stringsAction'
+    import StatusAction from '../actions/statusAction'
+    import BattleAction from '../actions/battleAction'
+
+    import sleep from '../utility/sleep'
+    import { attackAnime, damageAnime } from '../utility/anime'
+    export default {
+      components: {
+        Typed,
+        BackHomeDialog
+      },
+      onBeforeMount(props) {
+        //ボス情報取得
+        EnemyAPI.getEnemy(props.stageId)
+          .then(res => {
+            const { status, data } = res
+            if(status === 200) {
+              //画像データ表示
+              this.imageFileData = `data:image/png;base64,${data.image_data}`
+              //ボスの名前
+              this.enemyName = data.name
+              //ボスの最大HP
+              this.enemyMaxHp = data.hp
+              //初期メッセージ表示
+              this.store.dispatch(StringsAction.changeStrings([`${this.enemyName}があらわれた。`]))
+              //stateにボス情報保存
+              this.store.dispatch(BattleAction.addEnemy({
+                name: data.name,
+                hp: data.hp,
+                action_pattern: data.action_pattern,
+                experience_point: data.experience_point
+              }))
+
+              //自分のステータス情報取得
+              const id = this.store.getState().currentUserData.id
+              UserAPI.getUserStatus(id)
+                .then(res => {
+                  const { status, data } = res
+                  if(status === 200) {
+                    this.store.dispatch(BattleAction.addBattleUser({
+                      level: data.level,
+                      hp: data.hp,
+                      mp: data.mp,
+                      attack: data.attack,
+                      defence: data.defence,
+                      next_level_point: data.next_level_point
+                    }))
+                    //画面更新
+                    this.update()
+                  }
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+      attackHandler(e) {
+        //バトル管理インスタンス生成
+        const battleManager = this.createBattleManager()
+
+        //プレーヤーのターン
+        //こうげき文言表示
+        this.store.dispatch(StringsAction.changeStrings([`${ battleManager.userName }のこうげき。`]))
+        this.update()
+
+        //アタックアニメーション
+        attackAnime('#enemy-area img')
+
+        //少し待ってからダメージ値表示
+        const afterEnemyLife = battleManager.getDamagedEnemyLife()
+        sleep(3000)
+          .then(() => {
+            this.store.dispatch(StringsAction.changeStrings([`${ battleManager.userAttack }のダメージ。`]))
+            this.update()
+          })
+          .then(() => {
+            //ボスのライフが0になったら
+            if(afterEnemyLife <= 0) {
+              sleep(3000)
+                .then(() => {
+                  //バトル前の次のレベルまでに必要な経験値
+                  const userNextLevelPoint = this.store.getState().battleData.user.next_level_point
+                  //バトル後の次のレベルまでに必要な経験値
+                  const afterUserNextLevelPoint = userNextLevelPoint - battleManager.experiencePoint
+
+                  //一旦、ボスクリア文言表示
+                  this.store.dispatch(StringsAction.changeStrings([
+                    `${ battleManager.enemyName }をたおした。`,
+                    `${ battleManager.experiencePoint }の経験値をかくとくした。`
+                  ]))
+                  //ダイアログ表示文言もここで更新しておく
+                  this.title = 'あなたの勝ちです✨'
+                  this.text = 'ホームに戻ります。'
+                  this.update()
+
+                  //少し待ってから
+                  sleep(4000)
+                    .then(() => {
+                      const id = this.store.getState().currentUserData.id
+                      const clearStageLevel = this.props.stageId
+                      //ボスクリア後処理
+                      UserAPI.stageClear(id, clearStageLevel, battleManager.experiencePoint).catch(err => console.log(err))
+                    })
+                    .then(() => {
+                      //レベルアップしていたら文言表示
+                      if(afterUserNextLevelPoint <= 0) {
+                        this.store.dispatch(StringsAction.changeStrings([`${battleManager.userName}のレベルが${battleManager.userLevel + 1}にあがりました。`]))
+                        this.update()
+                      }
+                    })
+                    .then(() => {
+                      //少し待ってからダイアログ表示
+                      sleep(3000).then(() => this.dialogHandler())
+                    })
+                })
+            } else {
+              //ボスのターン
+              this.enemyAttack(battleManager, afterEnemyLife, false)
+            }
+          })
+      },
+      deffenceHandler(e) {
+        //バトル管理インスタンス生成
+        const battleManager = this.createBattleManager()
+
+        //ユーザーのターン
+        this.store.dispatch(StringsAction.changeStrings([`${battleManager.userName}は身を守っている。`]))
+        this.update()
+
+        //ボスの攻撃
+        this.enemyAttack(battleManager, battleManager.enemyLife, true)
+      },
+      specialHandler(e) {
+        //TODO
+      },
+      dialogHandler() {
+        this.$('#back-home-dialog').showModal()
+      },
+      createBattleManager() {
+        //ボス名
+        const enemyName = this.store.getState().battleData.enemy.name
+        //ボスの現在のHP
+        const enemyLife = this.store.getState().battleData.enemy.hp
+        //倒したときの獲得経験値
+        const experiencePoint = this.store.getState().battleData.enemy.experience_point
+        //プレイヤー名
+        const userName = this.store.getState().currentUserData.name
+        //プレイヤーのレベル
+        const userLevel = this.store.getState().battleData.user.level
+        //プレイヤーの現在のHP
+        const userLife = this.store.getState().battleData.user.hp
+        //プレイヤーの攻撃値
+        const userAttack = this.store.getState().battleData.user.attack
+        //プレイヤーの防御値
+        const userDefence = this.store.getState().battleData.user.defence
+        //ボスの行動パターンの現在地
+        const actionPatternIndex = this.store.getState().battleData.enemy.action_pattern_index
+        //ボスの現在の行動パターン
+        const enemyActionPattern = this.store.getState().battleData.enemy.action_pattern
+        const enemyAction = enemyActionPattern[actionPatternIndex]
+
+        class BattleManager {
+          constructor() {
+            this.enemyName = enemyName
+            this.enemyLife = enemyLife
+            this.experiencePoint = experiencePoint
+            this.userName = userName
+            this.userLevel = userLevel
+            this.userLife = userLife
+            this.userAttack = userAttack
+            this.userDefence = userDefence
+            this.enemyAction = enemyAction
+            this.enemyActionPattern = enemyActionPattern
+            this.actionPatternIndex = actionPatternIndex
+          }
+
+          getEnemyAttackPoint(isDefence) {
+            //ボス攻撃値 / 2 - (ユーザー防御値 / 10)
+            const value = isDefence ? Math.floor(this.enemyAction.attack_point / 2) - Math.floor(this.userDefence / 10) : this.enemyAction.attack_point
+            return value < 1 ? 1 : value
+          }
+
+          getDamagedUserLife(isDefence) {
+            return this.userLife - this.getEnemyAttackPoint(isDefence)
+          }
+
+          getDamagedEnemyLife() {
+            return this.enemyLife - this.userAttack
+          }
+        }
+        return new BattleManager()
+      },
+      enemyAttack(battleManager, afterEnemyLife, isDefence) {
+        //少し待ってからボスのこうげき文言表示
+        sleep(3000)
+          .then(() => {
+            this.store.dispatch(StringsAction.changeStrings([
+              battleManager.enemyAction.message,
+              `${battleManager.getEnemyAttackPoint(isDefence)}のダメージ`
+            ]))
+            this.update()
+            //ダメージアニメーション
+            damageAnime()
+
+            //プレイヤーのHPが0になったら
+            const afterUserLife = battleManager.getDamagedUserLife(isDefence)
+            if(afterUserLife <= 0) {
+              //少し待ってからダイアログ表示
+              sleep(3000)
+                .then(() => {
+                  this.title = 'あなたの負けです'
+                  this.text = `${battleManager.userName}は死にました`
+                  this.update()
+                  this.$('#back-home-dialog').showModal()
+                })
+            }
+
+            //次のインデックスが行動パターン配列の長さと等しくなったら0に戻る(最初の行動パターン)
+            const nextActionIndex = battleManager.actionPatternIndex + 1 === battleManager.enemyActionPattern.length ? 0 : battleManager.actionPatternIndex + 1
+
+            //このターンのバトル結果を更新
+            this.store.dispatch(BattleAction.updateBattleResult(afterUserLife, afterEnemyLife, nextActionIndex))
+            this.update()
+          })
+      }
+    }
+  </script>
 </battle>

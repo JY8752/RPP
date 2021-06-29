@@ -5,3 +5,9 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+#enemyテーブルのレコードを作成
+enemies = Settings.api.enemy
+enemies.each do | enemy |
+  Enemy.create(stage_level: enemy[:stage_level], name: enemy[:name])
+end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
     #ユーザー作成
-    let!(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password') }
+    let!(:user_a) { FactoryBot.create(:user, name: 'user_a', password: 'password', stage_level: 1) }
     let!(:role_java) { FactoryBot.create(:role, user_id: user_a.id, role: 0) }
     let!(:role_ruby) { FactoryBot.create(:role, user_id: user_a.id, role: 1, enabled: false) }
     let!(:role_rust) { FactoryBot.create(:role, user_id: user_a.id, role: 2, enabled: false) }
@@ -14,7 +14,7 @@ RSpec.describe "Users", type: :request do
             before do
                 #ユーザーを2件作成する
                 2.times do
-                    user = FactoryBot.create(:user, name: 'user_b', password: 'password')
+                    user = FactoryBot.create(:user, name: 'user_b', password: 'password', stage_level: 1)
                     FactoryBot.create(:role, user_id: user.id)
                 end
             end
@@ -89,7 +89,7 @@ RSpec.describe "Users", type: :request do
         context '有効なユーザーが2件のとき' do
             before do
                 #2件目のユーザーを作成する
-                FactoryBot.create(:user, name: 'user_b', password: 'password')
+                FactoryBot.create(:user, name: 'user_b', password: 'password', stage_level: 1)
             end
             it 'ユーザーが1件新規で作成されること' do
                 #APIリクエスト
@@ -106,7 +106,7 @@ RSpec.describe "Users", type: :request do
         context 'ユーザーが3件存在する場合' do
             before do
                 #2件のユーザーを作成する
-                2.times { FactoryBot.create(:user, name: 'user_b', password: 'password') }
+                2.times { FactoryBot.create(:user, name: 'user_b', password: 'password', stage_level: 1) }
             end
             it 'ユーザーの作成に失敗すること' do
                 #APIリクエスト
@@ -124,9 +124,9 @@ RSpec.describe "Users", type: :request do
         context '削除済みユーザーが1件有効ユーザーが2件の場合' do
             before do
                 #2件目のユーザーを作成する
-                FactoryBot.create(:user, name: 'user_b', password: 'password')
+                FactoryBot.create(:user, name: 'user_b', password: 'password', stage_level: 1)
                 #削除済みユーザーを1件作成する
-                FactoryBot.create(:user, name: 'delete_user', password: 'password', delete_date: Time.zone.now)
+                FactoryBot.create(:user, name: 'delete_user', password: 'password', delete_date: Time.zone.now, stage_level: 1)
             end
             it 'ユーザーが作成できること' do
                 #APIリクエスト
@@ -221,14 +221,16 @@ RSpec.describe "Users", type: :request do
         end
     end
 
-    #レベルアップ
-    describe 'PUT /api/v1/users/levelup/{ user_id }' do
+    #ステージクリア
+    describe 'PUT /api/v1/users/clear/{ user_id }' do
         #認証を通す
         before { sign_in(user_a.id, 'password') }
-        context 'レベル1の存在しているユーザーを指定したとき' do
+        #ステージ1 dukeインスタンス
+        let(:duke) { Enemies::Duke.new('Duke', 1) }
+        context 'stage_level1をクリアしたとき' do
             it 'レベルが２となっていること' do
                 #API実施
-                levelup(user_a.id)
+                clear(id: user_a.id, enemy: duke)
                 #レスポンスを確認する
                 check_get_user
             end
@@ -236,7 +238,7 @@ RSpec.describe "Users", type: :request do
               #レベルアップ前のステータス
               status = user_a.roles.where(enabled: true).first.status
               #API実施
-              levelup(user_a.id)
+              clear(id: user_a.id, enemy: duke)
               #ステータスを確認する
               check_updated_status user_id: user_a.id, before_status: status
             end
@@ -246,7 +248,7 @@ RSpec.describe "Users", type: :request do
                 #採番されないid
                 undefined_id = 0
                 #API実施
-                levelup(undefined_id)
+                clear(id: undefined_id, enemy: duke)
                 #エラーレスポンスを確認する
                 check_error_response(
                     Settings.api.error.E0001.code,
@@ -260,7 +262,7 @@ RSpec.describe "Users", type: :request do
                 #ユーザーaを削除
                 delete_user(user_a.id)
                 #APIリクエスト
-                levelup(user_a.id)
+                clear(id: user_a.id, enemy: duke)
                 check_error_response(
                     Settings.api.error.E0007.code,
                     Settings.api.error.E0007.message,

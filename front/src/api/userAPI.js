@@ -18,5 +18,14 @@ export default {
   },
   getUserStatus(id) {
     return instance.get(`/users/status/${id}`)
+  },
+  stageClear(id, stageLevel, experiencePoint) {
+    const params = {
+      result: {
+        clear_stage_level: stageLevel,
+        get_experience_point: experiencePoint 
+      }
+    }
+    return instance.put(`/users/clear/${id}`, params)
   }
 }

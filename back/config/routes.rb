@@ -14,8 +14,11 @@ Rails.application.routes.draw do
         delete 'users/:id', to: 'users#destroy', id: /\d+/
         get 'users', to: 'users#index'
         get 'users/:id', to: 'users#show', id: /\d+/
-        put 'users/levelup/:id', to: 'users#levelup', id: /\d+/
+        put 'users/clear/:id', to: 'users#stage_clear', id: /\d+/
         get 'users/status/:id', to: 'users#status', id: /\d+/
+
+        # enemies_controller
+        get 'enemies/:stage_id', to: 'enemies#show', stage_id: /\d+/
     end
   end
 end

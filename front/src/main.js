@@ -1,6 +1,6 @@
 import '@riotjs/hot-reload'
 import { component, install, register } from 'riot'
-import { Route, Router } from '@riotjs/route'
+import { Route, Router, router } from '@riotjs/route'
 import '@riotjs/observable'
 import 'semantic-ui-riot'
 import App from './app.riot'
@@ -8,7 +8,7 @@ import Store from './store'
 
 install(component => {
   component.store = Store.store
-
+  component.router = router
   return component
 })
 
