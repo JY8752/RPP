@@ -51,5 +51,6 @@ test:
 production:
   <<: *default
   database: app_production
-  username: app
-  password: <%= ENV['APP_DATABASE_PASSWORD'] %>
+  username: admin
+  password: rpppassword
+  host: rpp-rds.ca9u6iqrbuz0.ap-northeast-1.rds.amazonaws.com
