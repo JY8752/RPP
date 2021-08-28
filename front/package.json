@@ -32,6 +32,7 @@
     "gulp-cli": "^2.3.0"
   },
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+		"start-prd": "dotenv -e .env.production webpack-dev-server"
   }
 }
