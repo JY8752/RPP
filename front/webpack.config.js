@@ -1,11 +1,14 @@
 /* eslint-disable no-undef */
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
-//const webpack = require('webpack')
+const enviroment = process.env.NODE_ENV || 'develop'
 
 module.exports = {
   plugins: [
-    new Dotenv({ systemvars: true})
+    new Dotenv({ 
+      systemvars: true,
+      path: path.resolve(__dirname, `.env.${enviroment}`)
+    })
   ],
   entry: './src/main.js',
   output: {

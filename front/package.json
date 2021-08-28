@@ -33,6 +33,6 @@
   },
   "scripts": {
     "start": "webpack-dev-server",
-		"start-prd": "dotenv -e .env.production webpack-dev-server"
+		"start-prd": "NODE_ENV=production webpack-dev-server"
   }
 }
