@@ -22,6 +22,7 @@ services:
       dockerfile: Dockerfile
     volumes: 
       - ./front:/app
+			- /app/node_modules
     command: "yarn start-prd"
     ports:
       - 8080:8080
