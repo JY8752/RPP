@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-		environment: 
+    environment: 
       - RAILS_MASTER_KEY
     build: 
       context: ./back/
