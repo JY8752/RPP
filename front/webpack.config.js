@@ -2,6 +2,7 @@
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
 const enviroment = process.env.NODE_ENV || 'develop'
+console.log(enviroment, process.env.NODE_ENV)
 
 module.exports = {
   plugins: [
