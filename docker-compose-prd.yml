@@ -3,6 +3,7 @@ services:
   web:
     environment: 
       - RAILS_MASTER_KEY
+      - RAILS_LOG_TO_STDOUT
     build: 
       context: ./back/
       dockerfile: Dockerfile
