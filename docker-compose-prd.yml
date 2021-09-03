@@ -3,10 +3,10 @@ services:
   web:
     environment: 
       - RAILS_MASTER_KEY
-      - RAILS_LOG_TO_STDOUT
     build: 
       context: ./back/
       dockerfile: Dockerfile
+    command: env RAILS_LOG_TO_STDOUT
     command: /bin/sh -c "rm -f tmp/pids/server.pid && bundle exec rails s -e production -p 3000 -b '0.0.0.0'"
     volumes:
       - ./back:/app:cached
