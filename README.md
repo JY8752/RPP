@@ -2,6 +2,9 @@
 ロールプレイング風に作成したポートフォリオです。
 バックエンドはRuby on RailsをAPIモードで作成し、フロントエンドはRiot.jsを使用しシンプルなSPA構成になっています。
 
+公開URL
+http://54.199.233.154:8080/
+
 トップ画面<br>
 ![トップページ](https://media.giphy.com/media/jfOrmxreYfVgJJ4usu/giphy.gif "トップページ")
 
