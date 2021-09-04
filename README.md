@@ -2,6 +2,15 @@
 ロールプレイング風に作成したポートフォリオです。
 バックエンドはRuby on RailsをAPIモードで作成し、フロントエンドはRiot.jsを使用しシンプルなSPA構成になっています。
 
+トップ画面<br>
+![トップページ](https://media.giphy.com/media/jfOrmxreYfVgJJ4usu/giphy.gif "トップページ")
+
+ホーム画面<br>
+![ホーム](https://media.giphy.com/media/bOmQitGcRMg0yRGm2s/giphy.gif "ホーム")
+
+バトル画面<br>
+![バトル](https://media.giphy.com/media/1gqDCDOtsVOBv5mEFs/giphy.gif "バトル")
+
 # 使用技術
 ## バックエンド
 * ruby 2.7.2
